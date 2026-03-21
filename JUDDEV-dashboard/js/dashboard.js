@@ -506,12 +506,12 @@ function getRealisationForm(r = {}) {
   return `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
       ${formField('Titre *', `<input id="r-title" style="${inputStyle}" value="${r.title||''}" required />`)}
-      ${formField('Catégorie', `<input id="r-category" style="${inputStyle}" value="${r.category||''}" placeholder="E-commerce, Mobile, SaaS..." />`)}
+      ${formField('Catégorie', `<select id="r-category" style="${inputStyle}"><option value="">-- Choisir --</option><option value="E-commerce" ${r.category==='E-commerce'?'selected':''}>E-commerce</option><option value="Mobile" ${r.category==='Mobile'?'selected':''}>Mobile</option><option value="SaaS" ${r.category==='SaaS'?'selected':''}>SaaS</option><option value="Web App" ${r.category==='Web App'?'selected':''}>Web App</option><option value="Site Vitrine" ${r.category==='Site Vitrine'?'selected':''}>Site Vitrine</option><option value="UI/UX Design" ${r.category==='UI/UX Design'?'selected':''}>UI/UX Design</option><option value="IA / ML" ${r.category==='IA / ML'?'selected':''}>IA / ML</option><option value="Cloud" ${r.category==='Cloud'?'selected':''}>Cloud</option><option value="Autre" ${r.category==='Autre'?'selected':''}>Autre</option></select>`)}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
       ${formField('Client', `<input id="r-client" style="${inputStyle}" value="${r.client||''}" />`)}
       ${formField('Année', `<input id="r-year" style="${inputStyle}" value="${r.year||''}" placeholder="2025" />`)}
-      ${formField('Secteur', `<input id="r-sector" style="${inputStyle}" value="${r.sector||''}" placeholder="Commerce, Finance..." />`)}
+      ${formField('Secteur', `<select id="r-sector" style="${inputStyle}"><option value="">-- Choisir --</option><option value="Commerce" ${r.sector==='Commerce'?'selected':''}>Commerce</option><option value="Finance" ${r.sector==='Finance'?'selected':''}>Finance</option><option value="Santé" ${r.sector==='Santé'?'selected':''}>Santé</option><option value="Éducation" ${r.sector==='Éducation'?'selected':''}>Éducation</option><option value="Immobilier" ${r.sector==='Immobilier'?'selected':''}>Immobilier</option><option value="Logistique" ${r.sector==='Logistique'?'selected':''}>Logistique</option><option value="Agriculture" ${r.sector==='Agriculture'?'selected':''}>Agriculture</option><option value="Tourisme" ${r.sector==='Tourisme'?'selected':''}>Tourisme</option><option value="Industrie" ${r.sector==='Industrie'?'selected':''}>Industrie</option><option value="ONG / Associatif" ${r.sector==='ONG / Associatif'?'selected':''}>ONG / Associatif</option><option value="Tech & Startups" ${r.sector==='Tech & Startups'?'selected':''}>Tech & Startups</option><option value="Autre" ${r.sector==='Autre'?'selected':''}>Autre</option></select>`)}
     </div>
     ${formField('Image principale', `<input type="file" id="r-image" accept="image/*" style="${inputStyle};padding:0.5rem" />${r.image ? `<div style="margin-top:0.5rem"><img src="${resolveImageUrl(r.image)}" style="height:60px;border-radius:0.375rem;object-fit:cover" onerror="this.style.display='none'" /></div>` : ''}`)}
     ${formField('Description courte', `<textarea id="r-shortdesc" style="${textareaStyle};min-height:60px">${r.shortDesc||''}</textarea>`)}
@@ -659,10 +659,10 @@ function getArticleForm(a = {}) {
     ${formField('Titre *', `<input id="a-title" style="${inputStyle}" value="${a.title||''}" placeholder="Titre de l'article" required />`)}
     ${formField('Image de couverture * <span style="color:var(--accent-blue);font-size:0.72rem">(obligatoire)</span>', `<input type="file" id="a-image" accept="image/*" style="${inputStyle};padding:0.5rem" ${!a.id ? '' : ''} />${a.image ? `<div style="margin-top:0.5rem"><img src="${resolveImageUrl(a.image)}" style="height:60px;border-radius:0.375rem;object-fit:cover" onerror="this.style.display='none'" /></div>` : ''}`)}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      ${formField('Catégorie', `<input id="a-category" style="${inputStyle}" value="${a.category||''}" placeholder="IA, Architecture, Mobile..." />`)}
+      ${formField('Catégorie', `<select id="a-category" style="${inputStyle}"><option value="">-- Choisir --</option><option value="Intelligence Artificielle" ${a.category==='Intelligence Artificielle'?'selected':''}>Intelligence Artificielle</option><option value="Architecture" ${a.category==='Architecture'?'selected':''}>Architecture</option><option value="Mobile" ${a.category==='Mobile'?'selected':''}>Mobile</option><option value="Cloud" ${a.category==='Cloud'?'selected':''}>Cloud</option><option value="Design" ${a.category==='Design'?'selected':''}>Design</option><option value="Startup" ${a.category==='Startup'?'selected':''}>Startup</option><option value="Développement Web" ${a.category==='Développement Web'?'selected':''}>Développement Web</option><option value="Sécurité" ${a.category==='Sécurité'?'selected':''}>Sécurité</option><option value="DevOps" ${a.category==='DevOps'?'selected':''}>DevOps</option><option value="Autre" ${a.category==='Autre'?'selected':''}>Autre</option></select>`)}
       ${formField('Auteur', `<input id="a-author" style="${inputStyle}" value="${a.author||''}" placeholder="JAYSON STANLEY" />`)}
     </div>
-    ${formField('Tags', `<input id="a-tags" style="${inputStyle}" value="${(a.tags||[]).join(', ')}" placeholder="IA, Web, Innovation..." />`, 'Séparés par des virgules')}
+    ${formField('Tags', `<select id="a-tags" multiple style="${inputStyle};height:120px"><option value="IA" ${(a.tags||[]).includes('IA')?'selected':''}>IA</option><option value="Web" ${(a.tags||[]).includes('Web')?'selected':''}>Web</option><option value="Mobile" ${(a.tags||[]).includes('Mobile')?'selected':''}>Mobile</option><option value="Cloud" ${(a.tags||[]).includes('Cloud')?'selected':''}>Cloud</option><option value="Design" ${(a.tags||[]).includes('Design')?'selected':''}>Design</option><option value="Innovation" ${(a.tags||[]).includes('Innovation')?'selected':''}>Innovation</option><option value="Startup" ${(a.tags||[]).includes('Startup')?'selected':''}>Startup</option><option value="Architecture" ${(a.tags||[]).includes('Architecture')?'selected':''}>Architecture</option><option value="DevOps" ${(a.tags||[]).includes('DevOps')?'selected':''}>DevOps</option><option value="Sécurité" ${(a.tags||[]).includes('Sécurité')?'selected':''}>Sécurité</option><option value="Machine Learning" ${(a.tags||[]).includes('Machine Learning')?'selected':''}>Machine Learning</option></select>`, 'Maintenez Ctrl / Cmd pour sélectionner plusieurs tags')}
     ${formField('Description courte', `<textarea id="a-shortdesc" style="${textareaStyle};min-height:60px" placeholder="Résumé de l'article...">${a.shortDesc||''}</textarea>`)}
 
     <!-- Manual mode content -->
@@ -714,7 +714,7 @@ async function saveNewArticle() {
     fd.append('title', document.getElementById('a-title').value);
     fd.append('category', document.getElementById('a-category').value);
     fd.append('author', document.getElementById('a-author').value);
-    fd.append('tags', document.getElementById('a-tags').value);
+    fd.append('tags', [...document.getElementById('a-tags').selectedOptions].map(o => o.value).join(', '));
     fd.append('shortDesc', document.getElementById('a-shortdesc').value);
 
     const imgFile = document.getElementById('a-image')?.files[0];
@@ -764,7 +764,7 @@ async function saveEditArticle(id) {
     fd.append('title', document.getElementById('a-title').value);
     fd.append('category', document.getElementById('a-category').value);
     fd.append('author', document.getElementById('a-author').value);
-    fd.append('tags', document.getElementById('a-tags').value);
+    fd.append('tags', [...document.getElementById('a-tags').selectedOptions].map(o => o.value).join(', '));
     fd.append('shortDesc', document.getElementById('a-shortdesc').value);
     fd.append('content', document.getElementById('a-content')?.value || '');
     const imgFile = document.getElementById('a-image')?.files[0];

@@ -82,9 +82,9 @@
       <span class="section-badge" style="margin-bottom:1rem;display:inline-block">NEWSLETTER</span>
       <h2 class="section-title reveal">Restez <span>informé</span></h2>
       <p style="color:var(--text-muted);margin:1rem 0 2rem;reveal">Recevez nos derniers articles et insights directement dans votre boîte mail.</p>
-      <form style="display:flex;gap:0.75rem;max-width:450px;margin:0 auto" onsubmit="event.preventDefault();showNotification('success','Abonnement réussi !','Vous recevrez nos prochains articles par email.')">
-        <input type="email" class="form-input" placeholder="votre@email.com" required style="flex:1" />
-        <button type="submit" class="btn btn-primary" style="white-space:nowrap;padding:0.75rem 1.5rem">
+      <form id="newsletter-form" style="display:flex;gap:0.75rem;max-width:450px;margin:0 auto" onsubmit="handleNewsletterSubmit(event)">
+        <input type="email" id="newsletter-email" class="form-input" placeholder="votre@email.com" required style="flex:1" />
+        <button type="submit" id="newsletter-btn" class="btn btn-primary" style="white-space:nowrap;padding:0.75rem 1.5rem">
           <i class="fas fa-paper-plane"></i> S'abonner
         </button>
       </form>
@@ -227,9 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <h3 class="blog-card-title">${a.title}</h3>
           <p class="blog-card-excerpt">${a.shortDesc}</p>
-          <div class="blog-card-author">
-            <div class="author-avatar">${getAuthorInitials(a.author)}</div>
-            <span class="author-name">${a.author}</span>
+          <div style="margin-top:1rem">
             <span class="blog-card-link">Lire <i class="fas fa-arrow-right"></i></span>
           </div>
         </div>
@@ -247,6 +245,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   renderArticles(JUDDEV_DATA.articles);
+
+  // Newsletter form
+  window.handleNewsletterSubmit = async function(e) {
+    e.preventDefault();
+    const emailInput = document.getElementById('newsletter-email');
+    const btn = document.getElementById('newsletter-btn');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
+    btn.disabled = true;
+
+    try {
+      const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
+      const res = await fetch(API + '/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailInput.value })
+      });
+      const data = await res.json();
+      if (res.ok || res.status === 200) {
+        emailInput.value = '';
+        showNotification('success', 'Abonnement réussi !', data.message || 'Vous recevrez nos prochains articles par email.');
+      } else {
+        showNotification('error', 'Erreur', data.message || 'Une erreur est survenue.');
+      }
+    } catch (err) {
+      showNotification('error', 'Erreur', 'Impossible de traiter votre demande. Réessayez plus tard.');
+    }
+
+    btn.innerHTML = orig;
+    btn.disabled = false;
+  };
 
   // Blog category filters
   document.querySelectorAll('#blog-filters .filter-btn').forEach(btn => {

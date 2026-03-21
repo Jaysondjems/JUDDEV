@@ -525,7 +525,7 @@ const JUDDEV_DATA_DEFAULT = {
         'Déploiement cloud (Vercel, Railway, AWS)',
         'Projet final certifiant'
       ],
-      icon: '💻'
+      icon: '<i class="fas fa-laptop-code"></i>'
     },
     {
       id: 'formation-mobile',
@@ -544,7 +544,7 @@ const JUDDEV_DATA_DEFAULT = {
         'Tests et débogage',
         'Publication App Store & Google Play'
       ],
-      icon: '📱'
+      icon: '<i class="fas fa-mobile-alt"></i>'
     },
     {
       id: 'formation-uxui',
@@ -563,7 +563,7 @@ const JUDDEV_DATA_DEFAULT = {
         'Tests d\'utilisabilité',
         'Portfolio et présentation clients'
       ],
-      icon: '🎨'
+      icon: '<i class="fab fa-figma"></i>'
     },
     {
       id: 'formation-cloud',
@@ -582,7 +582,7 @@ const JUDDEV_DATA_DEFAULT = {
         'Sécurité cloud et bonnes pratiques',
         'Préparation certification AWS'
       ],
-      icon: '☁️'
+      icon: '<i class="fab fa-aws"></i>'
     },
     {
       id: 'formation-ia',
@@ -601,7 +601,7 @@ const JUDDEV_DATA_DEFAULT = {
         'Déploiement de modèles ML',
         'Projets pratiques et portfolio'
       ],
-      icon: '🤖'
+      icon: '<i class="fas fa-brain"></i>'
     }
   ],
 
@@ -623,7 +623,7 @@ const JUDDEV_DATA_DEFAULT = {
 // DATA MANAGEMENT - API + LocalStorage sync
 // ============================================================
 const _API_BASE = (typeof JUDDEV_CONFIG !== 'undefined') ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
-const _DATA_VERSION = '2.0'; // Bump when icon format changes
+const _DATA_VERSION = '3.0'; // Bump when icon format changes
 
 function getJUDDEVData() {
   try {

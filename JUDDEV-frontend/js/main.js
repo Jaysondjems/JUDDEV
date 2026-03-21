@@ -207,22 +207,55 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
   // Form submission
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const submitBtn = form.querySelector('.modal-submit');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Envoi en cours...';
+      const originalHTML = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
       submitBtn.disabled = true;
 
-      // Simulate form submission
-      setTimeout(() => {
-        closeModal();
-        form.reset();
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        showNotification('success', 'Devis envoyé !', 'Votre demande de devis a été envoyée avec succès. Nous vous contacterons dans les 24h.');
-      }, 1500);
+      // Collect all form fields
+      const inputs = [...form.querySelectorAll('input, select, textarea')];
+      const getValue = (placeholder) => inputs.find(i => i.placeholder === placeholder || i.name === placeholder)?.value || '';
+
+      // Build message body from all fields
+      const allInputs = [...form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], select, textarea')];
+      const name     = allInputs[0]?.value || '';
+      const email    = allInputs[1]?.value || '';
+      const phone    = allInputs[2]?.value || '';
+      const company  = allInputs[3]?.value || '';
+      const service  = allInputs[4]?.value || '';
+      const budget   = allInputs[5]?.value || '';
+      const desc     = allInputs[6]?.value || allInputs[7]?.value || '';
+
+      const msgBody = [
+        company ? `Entreprise: ${company}` : '',
+        service ? `Service souhaité: ${service}` : '',
+        budget  ? `Budget: ${budget}` : '',
+        `\nDescription du projet:\n${desc}`
+      ].filter(Boolean).join('\n');
+
+      try {
+        const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
+        await fetch(API + '/contact/message', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            email,
+            phone,
+            subject: `[DEVIS] ${service || 'Demande de devis'}`,
+            message: msgBody
+          })
+        });
+      } catch (_) {}
+
+      closeModal();
+      form.reset();
+      submitBtn.innerHTML = originalHTML;
+      submitBtn.disabled = false;
+      showNotification('success', 'Devis envoyé !', 'Votre demande a été reçue. Nous vous contacterons dans les 24h.');
     });
   }
 

@@ -39,7 +39,7 @@ function resolveImageUrl(path) {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   if (path.startsWith('/uploads/')) return UPLOADS_URL + path;
-  if (path.startsWith('images/')) return '../JUDDEV-frontend/' + path;
+  if (path.startsWith('images/')) return '/' + path;
   return path;
 }
 

@@ -3,6 +3,7 @@ const path = require('path');
 const Article = require('../models/Article');
 const auth = require('../middleware/auth');
 const { uploadMixed } = require('../middleware/upload');
+const { notifySubscribers } = require('./newsletter');
 
 const router = express.Router();
 
@@ -44,6 +45,8 @@ router.post('/', auth, uploadMixed.fields([{ name: 'image', maxCount: 1 }]), asy
       date: new Date()
     });
     await article.save();
+    // Notify newsletter subscribers
+    notifySubscribers(article).catch(() => {});
     res.status(201).json(article);
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur: ' + err.message });
@@ -107,6 +110,8 @@ router.post('/from-pdf', auth, uploadMixed.fields([
       date: new Date()
     });
     await article.save();
+    // Notify newsletter subscribers
+    notifySubscribers(article).catch(() => {});
     res.status(201).json(article);
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur: ' + err.message });

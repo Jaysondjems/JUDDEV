@@ -27,20 +27,24 @@ const JUDDEV_TRANSLATIONS = {
     'hero.stat.satisfaction': 'Satisfaction Client',
 
     // SECTIONS
-    'section.services.badge': 'CE QUE NOUS FAISONS',
-    'section.services.title': 'Des services digitaux <span>d\'excellence</span>',
-    'section.services.subtitle': 'De la conception à la mise en production, nous couvrons l\'intégralité de votre chaîne de valeur digitale avec expertise et passion.',
+    'section.services.badge': 'NOS EXPERTISES',
+    'section.services.title': 'CE QUE NOUS <span>FAISONS</span>',
+    'section.services.subtitle': 'Des solutions digitales complètes, de la conception à la livraison, pour propulser votre croissance.',
     'section.services.cta': 'Voir tous nos Services',
 
-    'section.realisations.badge': 'NOS RÉALISATIONS',
-    'section.realisations.title': 'Des projets qui <span>parlent d\'eux-mêmes</span>',
-    'section.realisations.subtitle': 'Chaque projet est une histoire de succès. Découvrez comment nous avons aidé nos clients à atteindre leurs objectifs digitaux.',
-    'section.realisations.cta': 'Voir tous nos Projets',
+    'section.realisations.badge': 'PORTFOLIO',
+    'section.realisations.title': 'NOTRE <span>TRAVAIL</span>',
+    'section.realisations.subtitle': 'Découvrez quelques-uns de nos projets phares qui illustrent notre expertise.',
+    'section.realisations.cta': 'Voir toutes nos Réalisations',
 
-    'section.blog.badge': 'NOTRE BLOG',
-    'section.blog.title': 'Actualités & <span>Insights</span>',
-    'section.blog.subtitle': 'Les dernières tendances, bonnes pratiques et actualités du monde digital par nos experts.',
+    'section.blog.badge': 'INSIGHTS',
+    'section.blog.title': 'Derniers <span>Articles de Blog</span>',
+    'section.blog.subtitle': 'Restez à la pointe de l\'innovation avec nos articles experts.',
     'section.blog.cta': 'Voir tous les Articles',
+
+    'section.partners.badge': 'CONFIANCE',
+    'section.partners.title': 'Un partenariat basé sur la <span>CONFIANCE</span>',
+    'section.partners.subtitle': 'Ils nous ont fait confiance pour transformer leur présence digitale.',
 
     'section.cta.badge': 'DÉMARRONS ENSEMBLE',
     'section.cta.title': 'Prêt à <span>digitaliser</span> votre activité ?',
@@ -173,10 +177,14 @@ const JUDDEV_TRANSLATIONS = {
     'section.realisations.subtitle': 'Every project is a success story. Discover how we\'ve helped our clients achieve their digital objectives.',
     'section.realisations.cta': 'View all Projects',
 
-    'section.blog.badge': 'OUR BLOG',
-    'section.blog.title': 'News & <span>Insights</span>',
-    'section.blog.subtitle': 'The latest trends, best practices and digital world news from our experts.',
+    'section.blog.badge': 'INSIGHTS',
+    'section.blog.title': 'Latest <span>Blog Articles</span>',
+    'section.blog.subtitle': 'Stay ahead of innovation with expert articles from our team.',
     'section.blog.cta': 'View all Articles',
+
+    'section.partners.badge': 'TRUST',
+    'section.partners.title': 'A partnership built on <span>TRUST</span>',
+    'section.partners.subtitle': 'They trusted us to transform their digital presence.',
 
     'section.cta.badge': 'LET\'S GET STARTED',
     'section.cta.title': 'Ready to <span>digitalize</span> your business?',
@@ -338,7 +346,7 @@ const JUDDEV_I18N = {
     const ctaBadge = document.querySelector('.cta-section .section-badge');
     if (ctaBadge) ctaBadge.textContent = this.t('section.cta.badge');
     const ctaTitle = document.querySelector('.cta-title');
-    if (ctaTitle) ctaTitle.innerHTML = this.t('section.cta.title').replace('<span>', '<span style="background:var(--gradient-primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">');
+    if (ctaTitle) ctaTitle.innerHTML = this.t('section.cta.title').replace('<span>', '<span class="cta-highlight">');
     const ctaSubtitle = document.querySelector('.cta-subtitle');
     if (ctaSubtitle) ctaSubtitle.textContent = this.t('section.cta.subtitle');
 
