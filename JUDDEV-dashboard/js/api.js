@@ -2,8 +2,8 @@
    JUDDEV CORPORATION - Dashboard API Helper
    ============================================================ */
 
-const API_URL = 'http://localhost:5000/api';
-const UPLOADS_URL = 'http://localhost:5000';
+const API_URL = window.location.origin + '/api';
+const UPLOADS_URL = window.location.origin;
 
 function getToken() {
   return localStorage.getItem('juddev_token');

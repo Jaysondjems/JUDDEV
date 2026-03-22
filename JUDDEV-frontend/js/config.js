@@ -4,15 +4,14 @@
    ============================================================ */
 
 const JUDDEV_CONFIG = {
-  // Backend API URL - update this for production deployment
-  API_URL: 'http://localhost:5000/api',
-  UPLOADS_URL: 'http://localhost:5000/uploads',
+  // API URL auto-détectée — fonctionne en local ET en production
+  API_URL: window.location.origin + '/api',
+  UPLOADS_URL: window.location.origin + '/uploads',
 
-  // Helper to resolve image URLs
   getImageUrl(path) {
     if (!path) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    if (path.startsWith('/uploads/')) return 'http://localhost:5000' + path;
-    return path; // local relative path (e.g., images/dev1.jpg)
+    if (path.startsWith('/uploads/')) return window.location.origin + path;
+    return path;
   }
 };
