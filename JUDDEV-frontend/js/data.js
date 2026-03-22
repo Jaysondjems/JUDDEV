@@ -187,7 +187,7 @@ const JUDDEV_DATA_DEFAULT = {
       title: 'Application Desktop',
       subtitle: 'Logiciels puissants pour Windows, Mac et Linux',
       icon: '<i class="fas fa-desktop"></i>',
-      image: 'images/dev1.jpg',
+      image: 'images/ordi9-removebg-preview.png',
       shortDesc: 'Nous concevons et développons des applications desktop robustes, performantes et intuitives pour toutes les plateformes.',
       longDesc: 'JUDDEV CORPORATION développe des applications de bureau sur mesure répondant aux besoins métier les plus exigeants. Qu\'il s\'agisse d\'un outil de gestion interne, d\'un logiciel de traitement de données ou d\'une solution métier complète, nous utilisons les technologies modernes pour créer des applications desktop fiables, rapides et maintenables. Nos applications sont compatibles Windows, Mac et Linux, et peuvent se synchroniser avec des services cloud pour un usage hybride optimal.',
       features: [

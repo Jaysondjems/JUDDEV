@@ -647,16 +647,16 @@ async function loadRealisationDetail() {
                 ${project.technologies.map(t => `<span class="tech-badge">${t}</span>`).join('')}
               </div>
 
-              ${(project.showSiteBtn !== false && project.url && project.url !== '#') || (project.showYoutubeBtn && project.youtubeUrl) ? `
+              ${project.showSiteBtn !== false || project.showYoutubeBtn ? `
                 <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
-                  ${project.showSiteBtn !== false && project.url && project.url !== '#' ? `
-                    <a href="${project.url}" target="_blank" class="btn btn-primary">
+                  ${project.showSiteBtn !== false ? `
+                    <a href="${project.url || '#'}" target="_blank" class="btn btn-primary">
                       <i class="fas fa-external-link-alt"></i> Visiter le projet
                     </a>
                   ` : ''}
-                  ${project.showYoutubeBtn && project.youtubeUrl ? `
-                    <a href="${project.youtubeUrl}" target="_blank" class="btn btn-outline" style="border-color:#ff0000;color:#ff4444">
-                      <i class="fab fa-youtube"></i> Voir la vidéo
+                  ${project.showYoutubeBtn ? `
+                    <a href="${project.youtubeUrl || '#'}" target="_blank" class="btn btn-outline" style="border-color:#ff0000;color:#ff4444">
+                      <i class="fab fa-youtube"></i> Voir la démo YouTube
                     </a>
                   ` : ''}
                 </div>
