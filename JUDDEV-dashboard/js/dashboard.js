@@ -134,7 +134,8 @@ async function navigateTo(sectionId) {
     'messages': 'Messages Reçus',
     'team': 'Gestion de l\'Équipe',
     'faq': 'FAQ - Questions Fréquentes',
-    'newsletter': 'Abonnés Newsletter'
+    'newsletter': 'Abonnés Newsletter',
+    'commentaires': 'Commentaires Articles'
   };
   const titleEl = document.getElementById('topbar-title');
   if (titleEl) titleEl.textContent = titles[sectionId] || sectionId;
@@ -150,6 +151,7 @@ async function navigateTo(sectionId) {
     case 'partenaires': await loadPartenaires(); break;
     case 'messages': await loadMessages(); break;
     case 'newsletter': await loadNewsletter(); break;
+    case 'commentaires': await loadAllComments(); break;
     case 'team': await loadTeam(); break;
     case 'faq': await loadFAQ(); break;
   }
@@ -734,7 +736,7 @@ function getArticleForm(a = {}) {
         <p style="font-size:0.82rem;color:#fbbf24;margin-bottom:0.5rem;font-weight:600"><i class="fas fa-circle-info"></i> Comment ça marche ?</p>
         <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6">Le système va extraire automatiquement le texte de votre PDF et le formater en contenu HTML pour votre article. Vous devrez toujours ajouter le titre et l'image.</p>
       </div>
-      ${formField('Fichier PDF *', `<input type="file" id="a-pdf" accept=".pdf,application/pdf" style="${inputStyle};padding:0.5rem" />`, 'Taille max: 50MB')}
+      ${formField('Fichier PDF *', `<input type="file" id="a-pdf" accept=".pdf" style="${inputStyle};padding:0.5rem" />`, 'Taille max: 50MB')}
     </div>
   `;
 }
@@ -1279,6 +1281,68 @@ async function deleteSubscriber(id) {
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// COMMENTAIRES
+// ============================================================
+async function loadAllComments() {
+  const section = document.getElementById('section-commentaires');
+  if (!section) return;
+  section.innerHTML = `<div style="text-align:center;padding:2rem"><i class="fas fa-circle-notch fa-spin" style="color:var(--accent-blue);font-size:1.5rem"></i></div>`;
+
+  try {
+    const comments = await apiGet('/articles/comments') || [];
+    const badge = document.getElementById('badge-commentaires');
+    if (badge) badge.textContent = comments.length || '0';
+
+    if (!comments.length) {
+      section.innerHTML = `
+        <div class="section-header"><h2 class="section-title">Commentaires <span>Articles</span></h2></div>
+        <div class="empty-state"><i class="fas fa-comments" style="font-size:2rem;color:var(--text-dim);margin-bottom:1rem"></i><p>Aucun commentaire pour l'instant.</p></div>`;
+      return;
+    }
+
+    section.innerHTML = `
+      <div class="section-header"><h2 class="section-title">Commentaires <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted)">(${comments.length})</span></h2></div>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        ${comments.map(c => `
+          <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:0.75rem;padding:1rem 1.25rem;display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:2.5rem;height:2.5rem;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;color:#fff;flex-shrink:0">${(c.name||'?')[0].toUpperCase()}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;margin-bottom:0.35rem">
+                <span style="font-weight:600;font-size:0.875rem;color:var(--text-primary)">${escapeHtml(c.name)}</span>
+                ${c.email ? `<span style="font-size:0.75rem;color:var(--text-dim)">&lt;${escapeHtml(c.email)}&gt;</span>` : ''}
+                <span style="font-size:0.72rem;color:var(--text-dim)">${new Date(c.date).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}</span>
+              </div>
+              <div style="font-size:0.78rem;color:#1a7aff;margin-bottom:0.5rem;background:rgba(0,102,255,0.08);display:inline-block;padding:0.15rem 0.6rem;border-radius:999px">
+                <i class="fas fa-newspaper"></i> ${escapeHtml(c.articleTitle)}
+              </div>
+              <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.5;margin:0;white-space:pre-wrap">${escapeHtml(c.text)}</p>
+            </div>
+            <button onclick="deleteCommentFromSection('${c.articleId}','${c.commentId}')"
+              style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:0.5rem;padding:0.4rem 0.7rem;cursor:pointer;font-size:0.8rem;flex-shrink:0;font-family:inherit"
+              title="Supprimer ce commentaire">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `).join('')}
+      </div>`;
+  } catch (err) {
+    section.innerHTML = `<p style="color:var(--text-muted)">Erreur: ${err.message}</p>`;
+  }
+}
+
+async function deleteCommentFromSection(articleId, commentId) {
+  confirmDelete('ce commentaire', async () => {
+    try {
+      await apiDelete(`/articles/${articleId}/comments/${commentId}`);
+      showToast('success', 'Supprimé', 'Commentaire supprimé.');
+      await loadAllComments();
+    } catch (err) {
+      showToast('error', 'Erreur', err.message);
+    }
+  });
 }
 
 async function markMessageRead(id) {

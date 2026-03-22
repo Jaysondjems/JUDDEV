@@ -16,6 +16,31 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /api/articles/comments - All comments from all articles (admin)
+router.get('/comments', auth, async (req, res) => {
+  try {
+    const articles = await Article.find({ 'comments.0': { $exists: true } }, 'id title comments');
+    const allComments = [];
+    articles.forEach(a => {
+      a.comments.forEach(c => {
+        allComments.push({
+          articleId: a.id,
+          articleTitle: a.title,
+          commentId: c._id,
+          name: c.name,
+          email: c.email,
+          text: c.text,
+          date: c.date
+        });
+      });
+    });
+    allComments.sort((a, b) => new Date(b.date) - new Date(a.date));
+    res.json(allComments);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
 // GET /api/articles/:id
 router.get('/:id', async (req, res) => {
   try {
