@@ -9,15 +9,22 @@ async function sendEmail(to, subject, html) {
     console.log('[Email] SMTP non configuré — variable SMTP_PASS manquante ou par défaut');
     return;
   }
-  console.log('[Email] Tentative envoi vers:', to, '| Sujet:', subject);
+  const port = parseInt(process.env.SMTP_PORT) || 587;
+  console.log('[Email] Tentative envoi vers:', to, '| Port:', port, '| Sujet:', subject);
   try {
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT) || 587,
-      secure: parseInt(process.env.SMTP_PORT) === 465,
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      port,
+      secure: port === 465,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      connectionTimeout: 15000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
+      tls: { rejectUnauthorized: false }
     });
+    await transporter.verify();
+    console.log('[Email] ✅ Connexion SMTP OK');
     await transporter.sendMail({
       from: `"JUDDEV CORPORATION" <${process.env.SMTP_USER}>`,
       to,
@@ -27,6 +34,7 @@ async function sendEmail(to, subject, html) {
     console.log('[Email] ✅ Envoyé avec succès vers:', to);
   } catch (err) {
     console.error('[Email] ❌ Erreur:', err.message);
+    console.error('[Email] ❌ Code:', err.code, '| Response:', err.response || 'N/A');
   }
 }
 
