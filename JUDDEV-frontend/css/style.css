@@ -3162,6 +3162,119 @@ html.light-mode .hero {
   background: linear-gradient(160deg, #e8eeff 0%, #f0f4ff 60%, #e0ecff 100%);
 }
 
+/* ============================================================
+   HERO IMAGE - FULL HEIGHT
+   ============================================================ */
+.hero-visual {
+  align-self: stretch;
+}
+
+.hero-device-wrap {
+  max-width: 1000px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.hero-device-wrap img {
+  width: 100%;
+  height: 70vh;
+  object-fit: contain;
+}
+
+/* ============================================================
+   FAQ SECTION
+   ============================================================ */
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.faq-item:hover {
+  border-color: rgba(0, 102, 255, 0.4);
+}
+
+.faq-item.open {
+  border-color: rgba(0, 102, 255, 0.5);
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+  line-height: 1.5;
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  color: var(--accent-blue);
+  transition: transform 0.3s ease;
+  font-size: 0.85rem;
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  padding: 0 1.5rem;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 300px;
+  padding: 0 1.5rem 1.25rem;
+}
+
+.faq-answer p {
+  color: var(--text-muted);
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+
+.faq-answer p strong {
+  color: var(--accent-cyan);
+}
+
+@media (max-width: 600px) {
+  .faq-grid { grid-template-columns: 1fr; }
+}
+
+html.light-mode .faq-item {
+  background: #ffffff;
+}
+html.light-mode .faq-question {
+  color: #1a1a2e;
+}
+html.light-mode .faq-answer p {
+  color: #4a5568;
+}
+
 html.light-mode .hero-grid {
   background-image:
     linear-gradient(rgba(0,82,204,0.06) 1px, transparent 1px),
@@ -3447,4 +3560,82 @@ html.light-mode .cta-section .cta-title {
 
 html.light-mode .cta-section .cta-subtitle {
   color: rgba(255,255,255,0.85);
+}
+
+/* ============================================================
+   RESPONSIVE FIXES
+   ============================================================ */
+
+/* Hide navbar CTA button on small/tablet screens to keep hamburger visible */
+@media (max-width: 768px) {
+  .navbar-cta { display: none; }
+  .navbar-container { padding: 0 1rem; }
+  #navbar { padding: 0 1rem; }
+}
+
+/* Ensure hamburger is always visible and has enough z-index */
+@media (max-width: 1024px) {
+  .navbar-hamburger {
+    display: flex !important;
+    flex-shrink: 0;
+    z-index: 1001;
+    position: relative;
+  }
+}
+
+/* Hero section: prevent overflow and content cutoff on small screens */
+@media (max-width: 1024px) {
+  .hero {
+    overflow: hidden;
+    padding-top: calc(var(--navbar-height) + 2rem);
+    padding-bottom: 3rem;
+  }
+  .hero-content {
+    padding: 0 1rem;
+    gap: 2rem;
+  }
+  .hero-title {
+    font-size: clamp(1.4rem, 5vw, 2.5rem);
+    word-break: break-word;
+  }
+  .hero-subtitle {
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+  }
+  .hero-stats {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .hero-stat-item {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-title { font-size: clamp(1.2rem, 6vw, 1.8rem); }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { text-align: center; justify-content: center; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); display: grid; gap: 0.75rem; }
+  .hero-stat-item { text-align: center; }
+}
+
+/* Partners grid: 2 per row on mobile */
+@media (max-width: 600px) {
+  .partners-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .partner-logo {
+    width: 100%;
+    height: 100px;
+  }
+}
+
+/* Prevent horizontal overflow site-wide */
+body {
+  overflow-x: hidden;
+}
+.hero, .section, .container, .container-wide {
+  max-width: 100vw;
+  box-sizing: border-box;
 }

@@ -2,6 +2,7 @@ const express = require('express');
 const ContactInfo = require('../models/ContactInfo');
 const ContactMessage = require('../models/ContactMessage');
 const auth = require('../middleware/auth');
+const { uploadImage } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -36,6 +37,54 @@ router.put('/info', auth, async (req, res) => {
     res.json(info);
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur: ' + err.message });
+  }
+});
+
+// POST /api/contact/partner - Add a partner (admin)
+router.post('/partner', auth, uploadImage.single('image'), async (req, res) => {
+  try {
+    const { name, url } = req.body;
+    const image = req.file ? `/uploads/images/${req.file.filename}` : (req.body.image || '');
+    let info = await ContactInfo.findOne();
+    if (!info) info = new ContactInfo({});
+    info.partners.push({ name: name || '', image, url: url || '#' });
+    await info.save();
+    res.status(201).json(info.partners);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur: ' + err.message });
+  }
+});
+
+// PUT /api/contact/partner/:index - Update a partner (admin)
+router.put('/partner/:index', auth, uploadImage.single('image'), async (req, res) => {
+  try {
+    const idx = parseInt(req.params.index);
+    let info = await ContactInfo.findOne();
+    if (!info || !info.partners[idx]) return res.status(404).json({ message: 'Partenaire non trouvé.' });
+    const { name, url } = req.body;
+    if (name !== undefined) info.partners[idx].name = name;
+    if (url !== undefined) info.partners[idx].url = url;
+    if (req.file) info.partners[idx].image = `/uploads/images/${req.file.filename}`;
+    info.markModified('partners');
+    await info.save();
+    res.json(info.partners);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur: ' + err.message });
+  }
+});
+
+// DELETE /api/contact/partner/:index - Remove a partner (admin)
+router.delete('/partner/:index', auth, async (req, res) => {
+  try {
+    const idx = parseInt(req.params.index);
+    let info = await ContactInfo.findOne();
+    if (!info || !info.partners[idx]) return res.status(404).json({ message: 'Partenaire non trouvé.' });
+    info.partners.splice(idx, 1);
+    info.markModified('partners');
+    await info.save();
+    res.json(info.partners);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur.' });
   }
 });
 

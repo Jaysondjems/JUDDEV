@@ -40,6 +40,7 @@ app.use('/api/articles', require('./routes/articles'));
 app.use('/api/formations', require('./routes/formations'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/newsletter', require('./routes/newsletter'));
+app.use('/api/team', require('./routes/team'));
 
 // API Health check
 app.get('/api/health', (req, res) => {
@@ -83,12 +84,25 @@ app.use((err, req, res, next) => {
 // DATABASE CONNECTION & START
 // ============================================================
 async function getMongoURI() {
-  // If a URI is provided in .env, use it directly
+  // Try Atlas (or any non-localhost URI) first, with a connection test
   if (process.env.MONGODB_URI && !process.env.MONGODB_URI.includes('localhost')) {
-    return process.env.MONGODB_URI;
+    try {
+      // Quick DNS/network test before handing URI to mongoose
+      const { Resolver } = require('dns').promises;
+      const resolver = new Resolver();
+      const host = process.env.MONGODB_URI.replace(/^mongodb(\+srv)?:\/\/[^@]+@/, '').split('/')[0].split(':')[0];
+      await Promise.race([
+        resolver.resolve(host),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('DNS timeout')), 3000))
+      ]);
+      console.log('✅ MongoDB Atlas accessible');
+      return process.env.MONGODB_URI;
+    } catch (dnsErr) {
+      console.warn('⚠️  MongoDB Atlas inaccessible (' + dnsErr.message + '). Tentative locale...');
+    }
   }
 
-  // Try to connect to local MongoDB first
+  // Try to connect to local MongoDB
   try {
     const net = require('net');
     await new Promise((resolve, reject) => {
@@ -97,7 +111,8 @@ async function getMongoURI() {
       socket.on('error', reject);
       setTimeout(() => { socket.destroy(); reject(new Error('timeout')); }, 1500);
     });
-    return process.env.MONGODB_URI || 'mongodb://localhost:27017/juddev';
+    console.log('✅ MongoDB local disponible');
+    return 'mongodb://localhost:27017/juddev';
   } catch {
     // Local MongoDB not available – fallback to mongodb-memory-server
     console.log('⚠️  MongoDB local non disponible. Démarrage du serveur embarqué...');
@@ -105,10 +120,9 @@ async function getMongoURI() {
       const { MongoMemoryServer } = require('mongodb-memory-server');
       const mongod = await MongoMemoryServer.create();
       const uri = mongod.getUri() + 'juddev';
-      console.log('✅ MongoDB embarqué démarré (données non persistantes - installez MongoDB pour la production)');
+      console.log('✅ MongoDB embarqué démarré (données non persistantes)');
       return uri;
     } catch (memErr) {
-      // Neither local nor embedded MongoDB available
       console.error('❌ MongoDB non disponible. Installez MongoDB: https://www.mongodb.com/try/download/community');
       process.exit(1);
     }
@@ -130,6 +144,23 @@ async function seedAdmin() {
   }
 }
 
+async function seedTeam() {
+  try {
+    const Team = require('./models/Team');
+    const count = await Team.countDocuments();
+    if (count === 0) {
+      await Team.insertMany([
+        { id: 'member-1', name: 'NGUEYE NGUEYE DURAND YOURI', role: 'Directeur Général & CEO', initials: 'ND', photo: '', tags: ['Backend Development', 'Gestion de Projet', 'Architecture Système', 'Node.js'], socials: { linkedin: '#', github: '#', twitter: '#' }, order: 1 },
+        { id: 'member-2', name: 'FOKOUA WOWO U STYVE', role: 'Directeur des Opérations & COO', initials: 'FS', photo: '', tags: ['Java Development', 'OOP Architecture', 'Gestion Opérationnelle', 'Mobile Dev'], socials: { linkedin: '#', github: '#', twitter: '#' }, order: 2 },
+        { id: 'member-3', name: 'JAYSON STANLEY DJEMETIO NINZAGO', role: 'Directeur Technique & CTO', initials: 'JS', photo: '', tags: ['UI/UX Design', 'Web Design', 'Direction Technique', 'React'], socials: { linkedin: '#', github: '#', behance: '#' }, order: 3 }
+      ]);
+      console.log('✅ Équipe initialisée');
+    }
+  } catch (e) {
+    console.warn('⚠️  Auto-seed team:', e.message);
+  }
+}
+
 async function start() {
   try {
     const mongoURI = await getMongoURI();
@@ -138,6 +169,7 @@ async function start() {
 
     // Auto-create admin user if not exists
     await seedAdmin();
+    await seedTeam();
 
     app.listen(PORT, () => {
       console.log(`\n🚀 JUDDEV Backend running on http://localhost:${PORT}`);

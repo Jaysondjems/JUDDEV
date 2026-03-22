@@ -230,13 +230,13 @@
       <h2 class="section-title" data-i18n="section.partners.title">Un partenariat basé sur la <span>CONFIANCE</span></h2>
       <p class="section-subtitle" data-i18n="section.partners.subtitle">Ils nous ont fait confiance pour transformer leur présence digitale.</p>
     </div>
-    <div class="partners-grid reveal">
-      <div class="partner-logo"><img src="images/téléchargement (7).jpg" alt="Partenaire 1" onerror="this.parentElement.innerHTML='<span>PARTNER 1</span>'" /></div>
-      <div class="partner-logo"><img src="images/téléchargement (8).jpg" alt="Partenaire 2" onerror="this.parentElement.innerHTML='<span>PARTNER 2</span>'" /></div>
-      <div class="partner-logo"><img src="images/téléchargement (9).jpg" alt="Partenaire 3" onerror="this.parentElement.innerHTML='<span>PARTNER 3</span>'" /></div>
-      <div class="partner-logo"><img src="images/téléchargement (10).jpg" alt="Partenaire 4" onerror="this.parentElement.innerHTML='<span>PARTNER 4</span>'" /></div>
-      <div class="partner-logo"><img src="images/téléchargement (4).jpg" alt="Partenaire 5" onerror="this.parentElement.innerHTML='<span>PARTNER 5</span>'" /></div>
-      <div class="partner-logo"><img src="images/JUDDEV.jpg" alt="JUDDEV" onerror="this.parentElement.innerHTML='<span>JUDDEV</span>'" /></div>
+    <div class="partners-grid reveal" id="partners-grid">
+      <div class="partner-logo"><img src="images/partenaire1.png" alt="Partenaire 1" onerror="this.parentElement.innerHTML='<span>PARTNER 1</span>'" /></div>
+      <div class="partner-logo"><img src="images/partenaire2.png" alt="Partenaire 2" onerror="this.parentElement.innerHTML='<span>PARTNER 2</span>'" /></div>
+      <div class="partner-logo"><img src="images/partenaire3.png" alt="Partenaire 3" onerror="this.parentElement.innerHTML='<span>PARTNER 3</span>'" /></div>
+      <div class="partner-logo"><img src="images/partenaire4.png" alt="Partenaire 4" onerror="this.parentElement.innerHTML='<span>PARTNER 4</span>'" /></div>
+      <div class="partner-logo"><img src="images/partenaire5.png" alt="Partenaire 5" onerror="this.parentElement.innerHTML='<span>PARTNER 5</span>'" /></div>
+      <div class="partner-logo"><img src="images/partenaire6.png" alt="Partenaire 6" onerror="this.parentElement.innerHTML='<span>PARTNER 6</span>'" /></div>
     </div>
   </div>
 </section>
@@ -256,6 +256,73 @@
       <a href="blog.html" class="btn btn-blue-outline">
         Voir tous les Articles <i class="fas fa-arrow-right"></i>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section class="section" style="background:var(--bg-secondary);border-top:1px solid var(--border-color)">
+  <div class="container">
+    <div class="section-header reveal-left">
+      <span class="section-badge">FAQ</span>
+      <h2 class="section-title">Questions <span>Fréquentes</span></h2>
+      <p class="section-subtitle">Tout ce que vous devez savoir pour démarrer votre projet digital.</p>
+    </div>
+    <div class="faq-grid reveal">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Combien coûte un site web ou une application ?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Nos tarifs varient selon la complexité du projet. Un site vitrine commence à partir de <strong>150 000 FCFA</strong>, une application mobile à partir de <strong>500 000 FCFA</strong>, et un produit SaaS sur mesure à partir de <strong>1 000 000 FCFA</strong>. Nous vous proposons systématiquement un devis gratuit et personnalisé.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Comment se déroule le processus de développement ?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Notre processus se déroule en 5 étapes claires : <strong>1) Découverte</strong> — comprendre vos besoins ; <strong>2) Conception</strong> — maquettes et architecture ; <strong>3) Développement</strong> — construction itérative ; <strong>4) Tests & Validation</strong> — vous impliquez à chaque étape ; <strong>5) Livraison & Déploiement</strong>. Vous êtes informé en temps réel des avancées.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Quels sont vos délais de livraison ?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Les délais dépendent de la taille du projet. Un site vitrine est généralement livré en <strong>2 à 4 semaines</strong>, une application mobile en <strong>6 à 12 semaines</strong>, et un produit SaaS complet en <strong>3 à 6 mois</strong>. Nous respectons rigoureusement les délais convenus.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Proposez-vous des services de maintenance après livraison ?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Oui, nous proposons des <strong>contrats de maintenance</strong> mensuels ou annuels incluant : mises à jour de sécurité, corrections de bugs, sauvegardes régulières, monitoring de performance et support technique prioritaire. Nous restons votre partenaire sur le long terme.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Travaillez-vous avec des clients en dehors du Cameroun ?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          <p>Absolument. Nous collaborons avec des clients à travers toute l'<strong>Afrique francophone</strong> et à l'international. Nos outils de collaboration en ligne (Zoom, Slack, Notion) nous permettent de travailler efficacement avec n'importe quel client, où qu'il se trouve.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Comment démarrer un projet avec JUDDEV ?</span>
+          <i class="fas fa-chevron-down faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          <p>C'est simple ! Cliquez sur <strong>"Demander un Devis Gratuit"</strong>, décrivez votre projet, et nous vous contacterons dans les <strong>24 heures</strong> pour planifier un appel de découverte. Ce premier échange est gratuit et sans engagement.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -318,11 +385,11 @@
         <h4 class="footer-col-title">Contact</h4>
         <div class="footer-contact-item">
           <i class="fas fa-envelope"></i>
-          <span>contact@juddev.com</span>
+          <span>juddevcorporation03@gmail.com</span>
         </div>
         <div class="footer-contact-item">
           <i class="fas fa-phone"></i>
-          <span>+237 6XX XXX XXX</span>
+          <span>+237 672 600 193</span>
         </div>
         <div class="footer-contact-item">
           <i class="fas fa-map-marker-alt"></i>
@@ -365,7 +432,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Téléphone</label>
-          <input type="tel" class="form-input" placeholder="+237 6XX XXX XXX" />
+          <input type="tel" class="form-input" placeholder="+237 672 600 193" />
         </div>
         <div class="form-group">
           <label class="form-label">Entreprise</label>
@@ -491,6 +558,24 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </a>
     `).join('');
+  }
+
+  // Load partners from API (override static if available)
+  const partnersGrid = document.getElementById('partners-grid');
+  if (partnersGrid) {
+    const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
+    fetch(API + '/contact/info').then(r => r.ok ? r.json() : null).then(info => {
+      if (info && info.partners && info.partners.length > 0) {
+        partnersGrid.innerHTML = info.partners.map((p, i) => `
+          <div class="partner-logo">
+            ${p.url && p.url !== '#'
+              ? `<a href="${p.url}" target="_blank" rel="noopener"><img src="${p.image}" alt="${p.name || 'Partenaire ' + (i+1)}" onerror="this.parentElement.innerHTML='<span>${p.name || 'PARTNER'}</span>'" /></a>`
+              : `<img src="${p.image}" alt="${p.name || 'Partenaire ' + (i+1)}" onerror="this.parentElement.innerHTML='<span>${p.name || 'PARTNER'}</span>'" />`
+            }
+          </div>
+        `).join('');
+      }
+    }).catch(() => {});
   }
 
   // Re-init scroll animations after dynamic content

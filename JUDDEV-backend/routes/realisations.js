@@ -45,7 +45,10 @@ router.post('/', auth, uploadImage.single('image'), async (req, res) => {
     const image = req.file ? `/uploads/images/${req.file.filename}` : (req.body.image || '');
     if (image && !images.includes(image)) images.unshift(image);
 
-    const realisation = new Realisation({ id, title, category, service, sector, image, images, shortDesc, longDesc, client, year, technologies, url: url || '#', highlights, order: order || 0 });
+    const youtubeUrl = req.body.youtubeUrl || '';
+    const showSiteBtn = req.body.showSiteBtn !== 'false' && req.body.showSiteBtn !== false;
+    const showYoutubeBtn = req.body.showYoutubeBtn === 'true' || req.body.showYoutubeBtn === true;
+    const realisation = new Realisation({ id, title, category, service, sector, image, images, shortDesc, longDesc, client, year, technologies, url: url || '#', youtubeUrl, showSiteBtn, showYoutubeBtn, highlights, order: order || 0 });
     await realisation.save();
     res.status(201).json(realisation);
   } catch (err) {
@@ -59,8 +62,11 @@ router.put('/:id', auth, uploadImage.single('image'), async (req, res) => {
     const { title, category, service, sector, shortDesc, longDesc, client, year, url, order } = req.body;
     const technologies = req.body.technologies ? (Array.isArray(req.body.technologies) ? req.body.technologies : req.body.technologies.split(',').map(t => t.trim()).filter(Boolean)) : [];
     const highlights = req.body.highlights ? (Array.isArray(req.body.highlights) ? req.body.highlights : req.body.highlights.split('\n').filter(Boolean)) : [];
+    const youtubeUrl = req.body.youtubeUrl || '';
+    const showSiteBtn = req.body.showSiteBtn !== 'false' && req.body.showSiteBtn !== false;
+    const showYoutubeBtn = req.body.showYoutubeBtn === 'true' || req.body.showYoutubeBtn === true;
 
-    const updateData = { title, category, service, sector, shortDesc, longDesc, client, year, technologies, highlights, url: url || '#', order: order || 0 };
+    const updateData = { title, category, service, sector, shortDesc, longDesc, client, year, technologies, highlights, url: url || '#', youtubeUrl, showSiteBtn, showYoutubeBtn, order: order || 0 };
     if (req.file) updateData.image = `/uploads/images/${req.file.filename}`;
     else if (req.body.image) updateData.image = req.body.image;
 

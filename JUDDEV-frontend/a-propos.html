@@ -99,12 +99,12 @@
       </div>
       <div class="reveal-right">
         <div style="position:relative">
-          <img src="images/Insight.jpg" alt="JUDDEV Team" style="width:100%;border-radius:var(--radius-2xl);aspect-ratio:4/3;object-fit:cover;border:1px solid var(--border-color);box-shadow:var(--shadow-xl),0 0 60px rgba(0,102,255,0.15)" onerror="this.src='images/dev1.jpg'" />
+          <img src="images/a-propos.jpeg" alt="JUDDEV Team" style="width:100%;border-radius:var(--radius-2xl);aspect-ratio:4/3;object-fit:cover;border:1px solid var(--border-color);box-shadow:var(--shadow-xl),0 0 60px rgba(0,102,255,0.15)" onerror="this.src='images/dev1.jpg'" />
           <div style="position:absolute;bottom:-20px;right:-20px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-xl);padding:1.25rem 1.5rem;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:1rem">
             <div style="font-size:2rem">🏆</div>
             <div>
               <div style="font-weight:700;color:var(--text-primary);font-size:0.9rem">Agence de confiance</div>
-              <div style="font-size:0.75rem;color:var(--text-dim)">depuis 2022</div>
+              <div style="font-size:0.75rem;color:var(--text-dim)">depuis 2025</div>
             </div>
           </div>
         </div>
@@ -306,8 +306,8 @@
       </div>
       <div>
         <h4 class="footer-col-title">Contact</h4>
-        <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>contact@juddev.com</span></div>
-        <div class="footer-contact-item"><i class="fas fa-phone"></i><span>+237 6XX XXX XXX</span></div>
+        <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>juddevcorporation03@gmail.com</span></div>
+        <div class="footer-contact-item"><i class="fas fa-phone"></i><span>+237 672 600 193</span></div>
         <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span>Yaoundé, Cameroun</span></div>
         <div class="footer-contact-item"><i class="fas fa-clock"></i><span>Lun - Ven: 8h00 - 18h00</span></div>
       </div>
@@ -334,7 +334,7 @@
       <div class="form-grid">
         <div class="form-group"><label class="form-label">Nom complet *</label><input type="text" class="form-input" placeholder="Jean Dupont" required /></div>
         <div class="form-group"><label class="form-label">Email *</label><input type="email" class="form-input" placeholder="jean@exemple.com" required /></div>
-        <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-input" placeholder="+237 6XX XXX XXX" /></div>
+        <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-input" placeholder="+237 672 600 193" /></div>
         <div class="form-group"><label class="form-label">Entreprise</label><input type="text" class="form-input" placeholder="Votre entreprise" /></div>
         <div class="form-group"><label class="form-label">Service souhaité *</label>
           <select class="form-input" required>
@@ -370,5 +370,61 @@
 <script src="js/data.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
+<script>
+// Load team from API and render
+document.addEventListener('DOMContentLoaded', async () => {
+  const grid = document.querySelector('.grid-3');
+  if (!grid) return;
+
+  const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
+
+  try {
+    const res = await fetch(API + '/team');
+    if (!res.ok) return;
+    const members = await res.json();
+    if (!members || members.length === 0) return;
+
+    const socialIcon = (platform, url) => {
+      if (!url || url === '#' || url === '') return '';
+      const icons = { linkedin: 'fa-linkedin-in', github: 'fa-github', twitter: 'fa-twitter', behance: 'fa-behance' };
+      const icon = icons[platform];
+      if (!icon) return '';
+      return `<a href="${url}" class="team-social-link" aria-label="${platform}" target="_blank"><i class="fab ${icon}"></i></a>`;
+    };
+
+    grid.innerHTML = members.map((m, i) => `
+      <div class="team-card reveal stagger-${(i % 3) + 1}">
+        <div class="team-card-inner">
+          ${m.photo
+            ? `<div class="team-avatar" style="padding:0;overflow:hidden;background:none"><img src="${m.photo}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.textContent='${m.initials || '??'}'" /></div>`
+            : `<div class="team-avatar">${m.initials || '??'}</div>`
+          }
+          <h3 class="team-name">${m.name}</h3>
+          <p class="team-role">${m.role}</p>
+          <div class="team-tags">
+            ${(m.tags || []).map(t => `<span class="team-tag">${t}</span>`).join('')}
+          </div>
+          <div class="team-socials">
+            ${socialIcon('linkedin', m.socials?.linkedin)}
+            ${socialIcon('github', m.socials?.github)}
+            ${socialIcon('twitter', m.socials?.twitter)}
+            ${socialIcon('behance', m.socials?.behance)}
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Re-observe new elements for scroll animation
+    setTimeout(() => {
+      grid.querySelectorAll('.reveal').forEach(el => {
+        const obs = new IntersectionObserver((entries) => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+        }, { threshold: 0.05 });
+        obs.observe(el);
+      });
+    }, 50);
+  } catch (_) { /* Keep hardcoded fallback */ }
+});
+</script>
 </body>
 </html>

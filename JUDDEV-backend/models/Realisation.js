@@ -14,6 +14,9 @@ const realisationSchema = new mongoose.Schema({
   year: { type: String, default: '' },
   technologies: [{ type: String }],
   url: { type: String, default: '#' },
+  youtubeUrl: { type: String, default: '' },
+  showSiteBtn: { type: Boolean, default: true },
+  showYoutubeBtn: { type: Boolean, default: false },
   highlights: [{ type: String }],
   order: { type: Number, default: 0 }
 }, { timestamps: true });

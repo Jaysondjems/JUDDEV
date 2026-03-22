@@ -238,6 +238,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
       try {
         const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
+        const formTypeField = form.querySelector('input[name="form-type"]');
+        const formType = formTypeField ? formTypeField.value : 'DEVIS';
         await fetch(API + '/contact/message', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -245,7 +247,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             name,
             email,
             phone,
-            subject: `[DEVIS] ${service || 'Demande de devis'}`,
+            subject: `[${formType}] ${service || 'Demande'}`,
             message: msgBody
           })
         });
@@ -290,6 +292,18 @@ function showNotification(type, title, message) {
     notification.classList.remove('show');
     setTimeout(() => notification.remove(), 400);
   }, 4500);
+}
+
+// ============================================================
+// FAQ ACCORDION
+// ============================================================
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  // Toggle current
+  if (!isOpen) item.classList.add('open');
 }
 
 // ============================================================
@@ -526,17 +540,33 @@ function loadServiceDetail() {
 }
 
 // Realisation Detail Page
-function loadRealisationDetail() {
+async function loadRealisationDetail() {
   const container = document.getElementById('realisation-detail-content');
   if (!container) return;
 
   const id = getURLParam('id');
-  if (!id || typeof JUDDEV_DATA === 'undefined') {
+  if (!id) {
     container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Réalisation introuvable.</p><a href="realisations.html" class="btn btn-primary" style="margin-top:1rem">Voir toutes les réalisations</a></div>';
     return;
   }
 
-  const project = getRealisationById(id);
+  let project = null;
+  try {
+    const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
+    const res = await fetch(`${API}/realisations/${id}`);
+    if (res.ok) {
+      project = await res.json();
+      if (!project.images || !project.images.length) project.images = [project.image].filter(Boolean);
+      if (!project.highlights) project.highlights = [];
+      if (!project.technologies) project.technologies = [];
+      if (!project.longDesc) project.longDesc = project.description || project.shortDesc || '';
+    }
+  } catch(e) {}
+
+  if (!project && typeof JUDDEV_DATA !== 'undefined') {
+    project = getRealisationById(id);
+  }
+
   if (!project) {
     container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Réalisation introuvable.</p><a href="realisations.html" class="btn btn-primary" style="margin-top:1rem">Voir toutes les réalisations</a></div>';
     return;
@@ -548,8 +578,8 @@ function loadRealisationDetail() {
   if (heroTitle) heroTitle.textContent = project.title;
   if (breadcrumbCurrent) breadcrumbCurrent.textContent = project.title;
 
-  const related = JUDDEV_DATA.realisations.filter(r => r.id !== id).slice(0, 3);
-  const service = getServiceById(project.service);
+  const related = typeof JUDDEV_DATA !== 'undefined' ? JUDDEV_DATA.realisations.filter(r => r.id !== id).slice(0, 3) : [];
+  const service = typeof getServiceById === 'function' ? getServiceById(project.service) : null;
 
   container.innerHTML = `
     <section class="section">
@@ -588,11 +618,18 @@ function loadRealisationDetail() {
                 ${project.technologies.map(t => `<span class="tech-badge">${t}</span>`).join('')}
               </div>
 
-              ${project.url && project.url !== '#' ? `
-                <div style="margin-top:2rem">
-                  <a href="${project.url}" target="_blank" class="btn btn-primary">
-                    <i class="fas fa-external-link-alt"></i> Visiter le projet
-                  </a>
+              ${(project.showSiteBtn !== false && project.url && project.url !== '#') || (project.showYoutubeBtn && project.youtubeUrl) ? `
+                <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+                  ${project.showSiteBtn !== false && project.url && project.url !== '#' ? `
+                    <a href="${project.url}" target="_blank" class="btn btn-primary">
+                      <i class="fas fa-external-link-alt"></i> Visiter le projet
+                    </a>
+                  ` : ''}
+                  ${project.showYoutubeBtn && project.youtubeUrl ? `
+                    <a href="${project.youtubeUrl}" target="_blank" class="btn btn-outline" style="border-color:#ff0000;color:#ff4444">
+                      <i class="fab fa-youtube"></i> Voir la vidéo
+                    </a>
+                  ` : ''}
                 </div>
               ` : ''}
             </div>

@@ -98,7 +98,9 @@ async function navigateTo(sectionId) {
     'articles': 'Articles de Blog',
     'formations': 'Formations',
     'contacts': 'Contacts & Infos',
-    'messages': 'Messages Reçus'
+    'partenaires': 'Gestion des Partenaires',
+    'messages': 'Messages Reçus',
+    'team': 'Gestion de l\'Équipe'
   };
   const titleEl = document.getElementById('topbar-title');
   if (titleEl) titleEl.textContent = titles[sectionId] || sectionId;
@@ -111,7 +113,9 @@ async function navigateTo(sectionId) {
     case 'articles': await loadArticles(); break;
     case 'formations': await loadFormations(); break;
     case 'contacts': await loadContacts(); break;
+    case 'partenaires': await loadPartenaires(); break;
     case 'messages': await loadMessages(); break;
+    case 'team': await loadTeam(); break;
   }
 }
 
@@ -518,7 +522,14 @@ function getRealisationForm(r = {}) {
     ${formField('Description longue', `<textarea id="r-longdesc" style="${textareaStyle}">${r.longDesc||''}</textarea>`)}
     ${formField('Points forts', `<textarea id="r-highlights" style="${textareaStyle};min-height:60px" placeholder="Un point par ligne...">${(r.highlights||[]).join('\n')}</textarea>`, 'Un point fort par ligne')}
     ${formField('Technologies', `<input id="r-techs" style="${inputStyle}" value="${(r.technologies||[]).join(', ')}" placeholder="React, Node.js..." />`)}
-    ${formField('URL', `<input id="r-url" style="${inputStyle}" value="${r.url||'#'}" placeholder="https://..." />`)}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      ${formField('URL du site', `<input id="r-url" style="${inputStyle}" value="${r.url||''}" placeholder="https://..." />`)}
+      ${formField('URL YouTube', `<input id="r-youtube" style="${inputStyle}" value="${r.youtubeUrl||''}" placeholder="https://youtube.com/..." />`)}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      ${formField('Bouton "Visiter le site"', `<select id="r-showsite" style="${inputStyle}"><option value="true" ${r.showSiteBtn!==false?'selected':''}>Visible</option><option value="false" ${r.showSiteBtn===false?'selected':''}>Masqué</option></select>`, 'Affiche le bouton si une URL est renseignée')}
+      ${formField('Bouton "Voir la vidéo"', `<select id="r-showyoutube" style="${inputStyle}"><option value="false" ${!r.showYoutubeBtn?'selected':''}>Masqué</option><option value="true" ${r.showYoutubeBtn?'selected':''}>Visible</option></select>`, 'Affiche le bouton si une URL YouTube est renseignée')}
+    </div>
   `;
 }
 
@@ -545,6 +556,9 @@ async function saveNewRealisation() {
     fd.set('highlights', document.getElementById('r-highlights').value);
     fd.set('technologies', document.getElementById('r-techs').value);
     fd.set('url', document.getElementById('r-url').value);
+    fd.set('youtubeUrl', document.getElementById('r-youtube').value);
+    fd.set('showSiteBtn', document.getElementById('r-showsite').value);
+    fd.set('showYoutubeBtn', document.getElementById('r-showyoutube').value);
     const imgFile = document.getElementById('r-image').files[0];
     if (imgFile) fd.append('image', imgFile);
 
@@ -580,6 +594,9 @@ async function saveEditRealisation(id) {
     fd.append('highlights', document.getElementById('r-highlights').value);
     fd.append('technologies', document.getElementById('r-techs').value);
     fd.append('url', document.getElementById('r-url').value);
+    fd.append('youtubeUrl', document.getElementById('r-youtube').value);
+    fd.append('showSiteBtn', document.getElementById('r-showsite').value);
+    fd.append('showYoutubeBtn', document.getElementById('r-showyoutube').value);
     const imgFile = document.getElementById('r-image').files[0];
     if (imgFile) fd.append('image', imgFile);
 
@@ -930,9 +947,17 @@ async function loadContacts() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           ${formField('<i class="fab fa-linkedin" style="color:#0077b5"></i> LinkedIn', `<input id="c-linkedin" style="${inputStyle}" value="${info.social?.linkedin||''}" placeholder="https://linkedin.com/..." />`)}
           ${formField('<i class="fab fa-twitter" style="color:#1da1f2"></i> Twitter/X', `<input id="c-twitter" style="${inputStyle}" value="${info.social?.twitter||''}" placeholder="https://x.com/..." />`)}
+          ${formField('<i class="fab fa-facebook" style="color:#1877f2"></i> Facebook', `<input id="c-facebook" style="${inputStyle}" value="${info.social?.facebook||''}" placeholder="https://facebook.com/..." />`)}
+          ${formField('<i class="fab fa-youtube" style="color:#ff0000"></i> YouTube', `<input id="c-youtube" style="${inputStyle}" value="${info.social?.youtube||''}" placeholder="https://youtube.com/..." />`)}
+          ${formField('<i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp', `<input id="c-whatsapp" style="${inputStyle}" value="${info.social?.whatsapp||''}" placeholder="https://wa.me/..." />`)}
           ${formField('<i class="fab fa-github" style="color:#6e5494"></i> GitHub', `<input id="c-github" style="${inputStyle}" value="${info.social?.github||''}" placeholder="https://github.com/..." />`)}
           ${formField('<i class="fab fa-instagram" style="color:#e4405f"></i> Instagram', `<input id="c-instagram" style="${inputStyle}" value="${info.social?.instagram||''}" placeholder="https://instagram.com/..." />`)}
         </div>
+      </div>
+
+      <div style="background:rgba(0,102,255,0.05);border:1px solid rgba(0,102,255,0.2);border-radius:0.75rem;padding:1rem;margin-top:1.5rem;display:flex;align-items:center;gap:0.75rem">
+        <i class="fas fa-handshake" style="color:var(--accent-blue);font-size:1.1rem;flex-shrink:0"></i>
+        <span style="font-size:0.85rem;color:var(--text-muted)">La gestion des logos partenaires a été déplacée dans la section <strong style="color:var(--text-primary)">Partenaires</strong> dans le menu de gauche.</span>
       </div>
     `;
   } catch (err) {
@@ -948,14 +973,139 @@ async function saveContactInfo() {
       address: document.getElementById('c-address')?.value,
       hours: document.getElementById('c-hours')?.value,
       social: {
-        linkedin: document.getElementById('c-linkedin')?.value,
-        twitter: document.getElementById('c-twitter')?.value,
-        github: document.getElementById('c-github')?.value,
-        instagram: document.getElementById('c-instagram')?.value
+        linkedin: document.getElementById('c-linkedin')?.value || '',
+        twitter: document.getElementById('c-twitter')?.value || '',
+        facebook: document.getElementById('c-facebook')?.value || '',
+        youtube: document.getElementById('c-youtube')?.value || '',
+        whatsapp: document.getElementById('c-whatsapp')?.value || '',
+        github: document.getElementById('c-github')?.value || '',
+        instagram: document.getElementById('c-instagram')?.value || ''
       }
     });
     showToast('success', 'Sauvegardé', 'Informations de contact mises à jour.');
     updateSyncTime();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+  }
+}
+
+// ============================================================
+// PARTENAIRES (section dédiée)
+// ============================================================
+let allPartners = [];
+
+async function loadPartenaires() {
+  const section = document.getElementById('section-partenaires');
+  if (!section) return;
+  section.innerHTML = `<div style="text-align:center;padding:2rem"><i class="fas fa-circle-notch fa-spin" style="color:var(--accent-blue);font-size:1.5rem"></i></div>`;
+
+  try {
+    const info = await apiPublicGet('/contact/info');
+    allPartners = info.partners || [];
+
+    section.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+        <h2 style="font-size:1.25rem;font-weight:700;color:var(--text-primary)">Partenaires <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted)">(${allPartners.length} logos)</span></h2>
+        <button onclick="showAddPartner()" style="background:var(--gradient-primary);border:none;color:white;padding:0.65rem 1.25rem;border-radius:0.5rem;font-size:0.85rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:0.5rem;font-family:inherit">
+          <i class="fas fa-plus"></i> Ajouter un Partenaire
+        </button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem">
+        ${allPartners.length === 0
+          ? '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted);border:1px dashed var(--border-color);border-radius:1rem">Aucun partenaire. Cliquez sur "Ajouter" pour commencer.</div>'
+          : allPartners.map((p, idx) => `
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:0.75rem;padding:1.25rem;text-align:center;position:relative;transition:border-color 0.2s"
+                 onmouseover="this.style.borderColor='rgba(0,102,255,0.4)'" onmouseout="this.style.borderColor='var(--border-color)'">
+              <div style="height:80px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem">
+                ${p.image
+                  ? `<img src="${resolveImageUrl(p.image)}" alt="${p.name||''}" style="max-width:100%;max-height:80px;object-fit:contain" onerror="this.style.display='none'" />`
+                  : `<div style="width:60px;height:60px;background:rgba(0,102,255,0.1);border-radius:0.5rem;display:flex;align-items:center;justify-content:center"><i class="fas fa-handshake" style="color:var(--accent-blue);font-size:1.5rem"></i></div>`
+                }
+              </div>
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text-primary);margin-bottom:0.25rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name||'Partenaire'}</div>
+              ${p.url && p.url !== '#' ? `<a href="${p.url}" target="_blank" style="font-size:0.7rem;color:var(--accent-light);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">${p.url.replace(/^https?:\/\//, '')}</a>` : ''}
+              <div style="display:flex;gap:0.4rem;margin-top:0.75rem;justify-content:center">
+                <button onclick="editPartner(${idx})" style="flex:1;background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.2);color:var(--accent-light);border-radius:0.375rem;padding:0.4rem;cursor:pointer;font-size:0.78rem;font-family:inherit">
+                  <i class="fas fa-pen"></i> Modifier
+                </button>
+                <button onclick="deletePartner(${idx})" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:0.375rem;padding:0.4rem 0.6rem;cursor:pointer;font-size:0.78rem;font-family:inherit">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `).join('')
+        }
+      </div>
+    `;
+  } catch (err) {
+    section.innerHTML = `<p style="color:var(--text-muted)">Erreur: ${err.message}</p>`;
+  }
+}
+
+function getPartnerForm(p = {}) {
+  return `
+    ${formField('Nom du partenaire *', `<input id="p-name" style="${inputStyle}" value="${p.name||''}" placeholder="Ex: MTN Cameroun" required />`)}
+    ${formField('Logo (image)', `<input type="file" id="p-image" accept="image/*" style="${inputStyle};padding:0.5rem" />${p.image ? `<div style="margin-top:0.5rem"><img src="${resolveImageUrl(p.image)}" style="height:60px;object-fit:contain;border-radius:0.375rem" onerror="this.style.display='none'" /></div>` : ''}`, 'PNG avec fond transparent recommandé')}
+    ${formField('URL du site partenaire', `<input id="p-url" style="${inputStyle}" value="${p.url||''}" placeholder="https://..." />`)}
+  `;
+}
+
+function showAddPartner() {
+  openModal('➕ Ajouter un Partenaire', getPartnerForm(), '');
+  document.getElementById('modal-submit-btn').onclick = saveNewPartner;
+}
+
+async function saveNewPartner() {
+  const btn = document.getElementById('modal-submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Ajout...';
+  try {
+    const fd = new FormData();
+    fd.append('name', document.getElementById('p-name').value);
+    fd.append('url', document.getElementById('p-url').value || '#');
+    const imgFile = document.getElementById('p-image').files[0];
+    if (imgFile) fd.append('image', imgFile);
+    await apiPostForm('/contact/partner', fd);
+    closeModal();
+    showToast('success', 'Partenaire ajouté', 'Le logo a été ajouté.');
+    await loadPartenaires();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Ajouter';
+  }
+}
+
+function editPartner(idx) {
+  const p = allPartners[idx];
+  if (!p) return;
+  openModal('✏️ Modifier le Partenaire', getPartnerForm(p), '');
+  document.getElementById('modal-submit-btn').onclick = () => saveEditPartner(idx);
+}
+
+async function saveEditPartner(idx) {
+  const btn = document.getElementById('modal-submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sauvegarde...';
+  try {
+    const fd = new FormData();
+    fd.append('name', document.getElementById('p-name').value);
+    fd.append('url', document.getElementById('p-url').value || '#');
+    const imgFile = document.getElementById('p-image').files[0];
+    if (imgFile) fd.append('image', imgFile);
+    await apiPutForm('/contact/partner/' + idx, fd);
+    closeModal();
+    showToast('success', 'Partenaire modifié', 'Modifications sauvegardées.');
+    await loadPartenaires();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Sauvegarder';
+  }
+}
+
+async function deletePartner(idx) {
+  if (!confirm('Supprimer ce partenaire ?')) return;
+  try {
+    await apiDelete('/contact/partner/' + idx);
+    showToast('success', 'Supprimé', 'Partenaire supprimé.');
+    await loadPartenaires();
   } catch (err) {
     showToast('error', 'Erreur', err.message);
   }
@@ -1047,6 +1197,133 @@ async function deleteMessage(id) {
     await apiDelete('/contact/messages/' + id);
     await loadMessages();
     showToast('success', 'Supprimé', 'Message supprimé.');
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+  }
+}
+
+// ============================================================
+// TEAM MANAGEMENT
+// ============================================================
+let allTeamMembers = [];
+
+async function loadTeam() {
+  const section = document.getElementById('section-team');
+  if (!section) return;
+  section.innerHTML = `<div style="text-align:center;padding:2rem"><i class="fas fa-circle-notch fa-spin" style="color:var(--accent-blue);font-size:1.5rem"></i></div>`;
+
+  try {
+    allTeamMembers = await apiGet('/team') || [];
+    buildListSection('section-team', {
+      title: `Équipe <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted)">(${allTeamMembers.length} membres)</span>`,
+      addLabel: 'Nouveau Membre',
+      onAdd: 'showAddTeamMember',
+      items: allTeamMembers,
+      renderItem: (m) => itemCard({
+        image: m.photo,
+        icon: m.initials || '👤',
+        title: m.name,
+        subtitle: m.role,
+        badge: m.tags?.[0] || '',
+        onEdit: `editTeamMember('${m.id}')`,
+        onDelete: `deleteTeamMember('${m.id}')`
+      })
+    });
+  } catch (err) {
+    section.innerHTML = `<p style="color:var(--text-muted)">Erreur: ${err.message}</p>`;
+  }
+}
+
+function getTeamForm(m = {}) {
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      ${formField('Nom complet *', `<input id="t-name" style="${inputStyle}" value="${m.name||''}" required />`)}
+      ${formField('Initiales', `<input id="t-initials" style="${inputStyle}" value="${m.initials||''}" placeholder="JS" maxlength="3" />`)}
+    </div>
+    ${formField('Rôle / Poste', `<input id="t-role" style="${inputStyle}" value="${m.role||''}" placeholder="Ex: Directeur Technique & CTO" />`)}
+    ${formField('Photo', `<input type="file" id="t-photo" accept="image/*" style="${inputStyle};padding:0.5rem" />${m.photo ? `<div style="margin-top:0.5rem"><img src="${resolveImageUrl(m.photo)}" style="height:60px;width:60px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'" /></div>` : ''}`, 'Laissez vide pour afficher les initiales')}
+    ${formField('Compétences (tags)', `<input id="t-tags" style="${inputStyle}" value="${(m.tags||[]).join(', ')}" placeholder="React, Node.js, UI/UX..." />`, 'Séparées par des virgules')}
+    <h4 style="font-size:0.8rem;font-weight:700;color:var(--text-secondary);margin-bottom:0.75rem;margin-top:0.5rem">Réseaux sociaux</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      ${formField('<i class="fab fa-linkedin" style="color:#0077b5"></i> LinkedIn', `<input id="t-linkedin" style="${inputStyle}" value="${m.socials?.linkedin||''}" placeholder="https://linkedin.com/..." />`)}
+      ${formField('<i class="fab fa-github" style="color:#6e5494"></i> GitHub', `<input id="t-github" style="${inputStyle}" value="${m.socials?.github||''}" placeholder="https://github.com/..." />`)}
+      ${formField('<i class="fab fa-twitter" style="color:#1da1f2"></i> Twitter', `<input id="t-twitter" style="${inputStyle}" value="${m.socials?.twitter||''}" placeholder="https://x.com/..." />`)}
+      ${formField('<i class="fab fa-behance" style="color:#1769ff"></i> Behance', `<input id="t-behance" style="${inputStyle}" value="${m.socials?.behance||''}" placeholder="https://behance.net/..." />`)}
+    </div>
+    ${formField('Ordre d\'affichage', `<input id="t-order" type="number" style="${inputStyle}" value="${m.order||0}" min="0" />`)}
+  `;
+}
+
+function showAddTeamMember() {
+  openModal('➕ Nouveau Membre', getTeamForm(), '');
+  document.getElementById('modal-submit-btn').onclick = saveNewTeamMember;
+}
+
+async function saveNewTeamMember() {
+  const btn = document.getElementById('modal-submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sauvegarde...';
+  try {
+    const fd = new FormData();
+    fd.append('name', document.getElementById('t-name').value);
+    fd.append('initials', document.getElementById('t-initials').value);
+    fd.append('role', document.getElementById('t-role').value);
+    fd.append('tags', document.getElementById('t-tags').value);
+    fd.append('linkedin', document.getElementById('t-linkedin').value);
+    fd.append('github', document.getElementById('t-github').value);
+    fd.append('twitter', document.getElementById('t-twitter').value);
+    fd.append('behance', document.getElementById('t-behance').value);
+    fd.append('order', document.getElementById('t-order').value);
+    const photo = document.getElementById('t-photo').files[0];
+    if (photo) fd.append('photo', photo);
+    await apiPostForm('/team', fd);
+    closeModal();
+    showToast('success', 'Membre ajouté', 'Le membre a été ajouté à l\'équipe.');
+    await loadTeam();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Sauvegarder';
+  }
+}
+
+function editTeamMember(id) {
+  const m = allTeamMembers.find(x => x.id === id);
+  if (!m) return;
+  openModal('✏️ Modifier le Membre', getTeamForm(m), '');
+  document.getElementById('modal-submit-btn').onclick = () => saveEditTeamMember(id);
+}
+
+async function saveEditTeamMember(id) {
+  const btn = document.getElementById('modal-submit-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sauvegarde...';
+  try {
+    const fd = new FormData();
+    fd.append('name', document.getElementById('t-name').value);
+    fd.append('initials', document.getElementById('t-initials').value);
+    fd.append('role', document.getElementById('t-role').value);
+    fd.append('tags', document.getElementById('t-tags').value);
+    fd.append('linkedin', document.getElementById('t-linkedin').value);
+    fd.append('github', document.getElementById('t-github').value);
+    fd.append('twitter', document.getElementById('t-twitter').value);
+    fd.append('behance', document.getElementById('t-behance').value);
+    fd.append('order', document.getElementById('t-order').value);
+    const photo = document.getElementById('t-photo').files[0];
+    if (photo) fd.append('photo', photo);
+    await apiPutForm('/team/' + id, fd);
+    closeModal();
+    showToast('success', 'Membre mis à jour', 'Les modifications ont été sauvegardées.');
+    await loadTeam();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Sauvegarder';
+  }
+}
+
+async function deleteTeamMember(id) {
+  if (!confirm('Supprimer ce membre de l\'équipe ?')) return;
+  try {
+    await apiDelete('/team/' + id);
+    showToast('success', 'Supprimé', 'Membre supprimé.');
+    await loadTeam();
   } catch (err) {
     showToast('error', 'Erreur', err.message);
   }
