@@ -41,6 +41,7 @@ app.use('/api/formations', require('./routes/formations'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/newsletter', require('./routes/newsletter'));
 app.use('/api/team', require('./routes/team'));
+app.use('/api/faq', require('./routes/faq'));
 
 // API Health check
 app.get('/api/health', (req, res) => {
@@ -175,7 +176,8 @@ async function seedServices() {
         { id: 'cloud', title: 'Ingénierie du Cloud', subtitle: 'Infrastructure scalable et fiable', icon: '☁️', image: 'images/dev5.jpg', shortDesc: 'Notre équipe conçoit et gère des systèmes cloud sécurisés, garantissant fiabilité, performance et capacité évolutive maximale.', longDesc: 'JUDDEV CORPORATION vous accompagne dans votre migration et gestion cloud avec une expertise reconnue sur les principales plateformes.', features: ['Architecture cloud multi-région', 'Migration vers le cloud', 'Infrastructure as Code (Terraform)', 'CI/CD pipelines automatisés', 'Sécurité cloud et Zero Trust', 'Optimisation des coûts cloud'], technologies: ['AWS', 'Azure', 'GCP', 'Terraform', 'Docker', 'Kubernetes', 'Ansible', 'GitHub Actions'], category: 'cloud', order: 5 },
         { id: 'mvp', title: 'Développement MVP', subtitle: "De l'idée au produit rapidement", icon: '🚀', image: 'images/dev6.jpg', shortDesc: 'Nous transformons les idées à fort potentiel en produits Minimum Viable Product, prêts à déployer en un temps record.', longDesc: 'Notre service MVP est conçu pour les startups et entrepreneurs qui veulent valider leur idée rapidement sans compromettre la qualité.', features: ['Workshop de définition du MVP', 'Roadmap et priorisation produit', 'Design UX/UI complet en 1 semaine', 'Développement agile par sprints', 'Tests automatisés et QA', 'Support post-lancement 30 jours'], technologies: ['React', 'Next.js', 'Node.js', 'MongoDB', 'Firebase', 'Stripe', 'Vercel', 'Railway'], category: 'web', order: 6 },
         { id: 'marketing-digital', title: 'Marketing Digital & SEO', subtitle: 'Visibilité et croissance en ligne', icon: '📈', image: 'images/ia.jpg', shortDesc: 'Stratégies digitales complètes pour augmenter votre visibilité en ligne, attirer plus de prospects et convertir efficacement.', longDesc: 'Notre équipe marketing digital combine expertise technique et créativité pour propulser votre présence en ligne.', features: ['Audit SEO complet et technique', 'Campagnes Google Ads', 'Publicités Meta, LinkedIn, TikTok', 'Email marketing et automation', 'Analytics et reporting mensuel', 'Growth hacking'], technologies: ['Google Ads', 'Meta Ads', 'Google Analytics 4', 'SEMrush', 'Mailchimp', 'HubSpot', 'Hotjar', 'Zapier'], category: 'marketing', order: 7 },
-        { id: 'ia-solutions', title: 'Solutions IA & Automatisation', subtitle: 'Intelligence artificielle au service de votre croissance', icon: '🤖', image: 'images/ia.jpg', shortDesc: "Intégration de l'IA et automatisation intelligente des processus métier pour maximiser votre productivité.", longDesc: "JUDDEV CORPORATION est à la pointe de l'intégration de l'intelligence artificielle dans les processus métier.", features: ["Intégration d'APIs IA (OpenAI, Anthropic)", 'Développement de chatbots intelligents', 'Automatisation de workflows métier', 'Analyse de données et prédictions ML', 'Traitement du langage naturel (NLP)', 'RAG et bases de connaissances IA'], technologies: ['Python', 'TensorFlow', 'PyTorch', 'OpenAI API', 'LangChain', 'Hugging Face', 'FastAPI', 'n8n'], category: 'ia', order: 8 }
+        { id: 'ia-solutions', title: 'Solutions IA & Automatisation', subtitle: 'Intelligence artificielle au service de votre croissance', icon: '🤖', image: 'images/ia.jpg', shortDesc: "Intégration de l'IA et automatisation intelligente des processus métier pour maximiser votre productivité.", longDesc: "JUDDEV CORPORATION est à la pointe de l'intégration de l'intelligence artificielle dans les processus métier.", features: ["Intégration d'APIs IA (OpenAI, Anthropic)", 'Développement de chatbots intelligents', 'Automatisation de workflows métier', 'Analyse de données et prédictions ML', 'Traitement du langage naturel (NLP)', 'RAG et bases de connaissances IA'], technologies: ['Python', 'TensorFlow', 'PyTorch', 'OpenAI API', 'LangChain', 'Hugging Face', 'FastAPI', 'n8n'], category: 'ia', order: 8 },
+        { id: 'desktop-app', title: 'Application Desktop', subtitle: 'Logiciels puissants pour Windows, Mac et Linux', icon: '🖥️', image: 'images/dev1.jpg', shortDesc: "Nous concevons et développons des applications desktop robustes, performantes et intuitives pour toutes les plateformes.", longDesc: "JUDDEV CORPORATION développe des applications de bureau sur mesure répondant aux besoins métier les plus exigeants. Qu'il s'agisse d'un outil de gestion interne, d'un logiciel de traitement de données ou d'une solution métier complète, nous utilisons les technologies modernes pour créer des applications desktop fiables, rapides et maintenables.", features: ['Applications Windows, Mac & Linux', 'Interfaces graphiques modernes (GUI)', 'Accès aux ressources système (fichiers, réseau, matériel)', 'Synchronisation avec des services cloud', 'Mise à jour automatique', 'Installation et packaging professionnel', 'Support et maintenance continue'], technologies: ['Electron', 'Python (PyQt, Tkinter)', 'C# (.NET / WPF)', 'Java (JavaFX)', 'Rust (Tauri)', 'C++'], category: 'desktop', order: 9 }
       ]);
       console.log('✅ Services initialisés');
     }
@@ -257,6 +259,24 @@ async function seedPartners() {
   }
 }
 
+async function seedFAQs() {
+  try {
+    const FAQ = require('./models/FAQ');
+    const count = await FAQ.countDocuments();
+    if (count === 0) {
+      await FAQ.insertMany([
+        { id: 'faq-1', question: 'Combien coûte un site web ou une application ?', answer: 'Le coût varie selon la complexité, les fonctionnalités et les délais de chaque projet. Chaque solution étant unique, nous établissons un devis personnalisé adapté à vos besoins et votre budget. Contactez-nous pour une estimation gratuite et sans engagement.', order: 1 },
+        { id: 'faq-2', question: 'Comment se passe le processus de développement ?', answer: 'Nous suivons une approche en 4 étapes : <strong>1) Analyse des besoins</strong> et cahier des charges, <strong>2) Design & prototypage</strong> soumis à validation, <strong>3) Développement itératif</strong> avec points réguliers, <strong>4) Tests, livraison et formation</strong>.', order: 2 },
+        { id: 'faq-3', question: 'Quels sont vos délais de livraison ?', answer: 'Les délais dépendent de la complexité : <strong>Site vitrine</strong> : 2-4 semaines · <strong>Application web</strong> : 4-12 semaines · <strong>Application mobile</strong> : 6-16 semaines · <strong>MVP</strong> : 8-12 semaines. Nous vous donnons un planning précis lors du devis.', order: 3 },
+        { id: 'faq-4', question: 'Proposez-vous des contrats de maintenance ?', answer: 'Oui, nous proposons des contrats de maintenance mensuels qui incluent les mises à jour de sécurité, la surveillance des performances, les correctifs de bugs et un support prioritaire. Nos tarifs sont adaptés à la taille et aux besoins de chaque projet.', order: 4 },
+        { id: 'faq-5', question: 'Travaillez-vous avec des clients hors Cameroun ?', answer: 'Absolument ! Nous collaborons avec des clients partout en Afrique et dans le monde. Nos outils de communication (Slack, Teams, Zoom) et notre méthodologie de travail à distance nous permettent de collaborer efficacement avec n\'importe quel fuseau horaire.', order: 5 },
+        { id: 'faq-6', question: 'Quelle technologie utilisez-vous pour mes projets ?', answer: 'Nous choisissons la technologie la mieux adaptée à votre projet. Pour le web : React, Next.js, Node.js, Laravel. Pour le mobile : React Native, Flutter. Pour le cloud : AWS, GCP, Azure. Pour l\'IA : Python, TensorFlow, OpenAI API. Chaque choix est justifié et documenté.', order: 6 }
+      ]);
+      console.log('✅ FAQs initialisées');
+    }
+  } catch (e) { console.warn('⚠️  Auto-seed FAQs:', e.message); }
+}
+
 async function start() {
   try {
     const mongoURI = await getMongoURI();
@@ -271,6 +291,7 @@ async function start() {
     await seedFormations();
     await seedTeam();
     await seedPartners();
+    await seedFAQs();
 
     app.listen(PORT, () => {
       console.log(`\n🚀 JUDDEV Backend running on http://localhost:${PORT}`);

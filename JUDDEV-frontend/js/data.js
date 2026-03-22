@@ -181,6 +181,26 @@ const JUDDEV_DATA_DEFAULT = {
       ],
       technologies: ['Python', 'TensorFlow', 'PyTorch', 'OpenAI API', 'LangChain', 'Hugging Face', 'FastAPI', 'n8n'],
       category: 'ia'
+    },
+    {
+      id: 'desktop-app',
+      title: 'Application Desktop',
+      subtitle: 'Logiciels puissants pour Windows, Mac et Linux',
+      icon: '<i class="fas fa-desktop"></i>',
+      image: 'images/dev1.jpg',
+      shortDesc: 'Nous concevons et développons des applications desktop robustes, performantes et intuitives pour toutes les plateformes.',
+      longDesc: 'JUDDEV CORPORATION développe des applications de bureau sur mesure répondant aux besoins métier les plus exigeants. Qu\'il s\'agisse d\'un outil de gestion interne, d\'un logiciel de traitement de données ou d\'une solution métier complète, nous utilisons les technologies modernes pour créer des applications desktop fiables, rapides et maintenables. Nos applications sont compatibles Windows, Mac et Linux, et peuvent se synchroniser avec des services cloud pour un usage hybride optimal.',
+      features: [
+        'Applications Windows, Mac & Linux',
+        'Interfaces graphiques modernes (GUI)',
+        'Accès aux ressources système (fichiers, réseau, matériel)',
+        'Synchronisation avec des services cloud',
+        'Mise à jour automatique',
+        'Installation et packaging professionnel',
+        'Support et maintenance continue'
+      ],
+      technologies: ['Electron', 'Python (PyQt, Tkinter)', 'C# (.NET / WPF)', 'Java (JavaFX)', 'Rust (Tauri)', 'C++'],
+      category: 'desktop'
     }
   ],
 

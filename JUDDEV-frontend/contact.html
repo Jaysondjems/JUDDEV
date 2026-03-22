@@ -331,26 +331,42 @@ async function handleContactSubmit(e) {
 }
 
 // FAQ
-document.addEventListener('DOMContentLoaded', () => {
-  const faqs = [
-    { q: 'Combien coûte un site web ou une application ?', a: 'Le coût varie selon la complexité, les fonctionnalités et les délais de chaque projet. Chaque solution étant unique, nous établissons un devis personnalisé adapté à vos besoins et votre budget. Contactez-nous pour une estimation gratuite et sans engagement.' },
-    { q: 'Comment se passe le processus de développement ?', a: 'Nous suivons une approche en 4 étapes : <strong>1) Analyse des besoins</strong> et cahier des charges, <strong>2) Design & prototypage</strong> soumis à validation, <strong>3) Développement itératif</strong> avec points réguliers, <strong>4) Tests, livraison et formation</strong>.' },
-    { q: 'Quels sont les délais de livraison ?', a: 'Un site vitrine est livré en <strong>2 à 4 semaines</strong>. Une application complète nécessite en général <strong>2 à 4 mois</strong> selon la complexité. Nous établissons un calendrier précis dès le démarrage du projet.' },
-    { q: 'Proposez-vous une maintenance après livraison ?', a: 'Oui, nous proposons des <strong>contrats de maintenance mensuelle</strong> incluant mises à jour de sécurité, hébergement, sauvegardes et support technique. C\'est indispensable pour garder votre solution performante et sécurisée.' },
-    { q: 'Travaillez-vous avec des clients internationaux ?', a: 'Absolument. Nous accompagnons des clients basés en <strong>Afrique, en Europe et dans la diaspora</strong>. Toute la communication et la gestion de projet se font à distance via des outils collaboratifs modernes.' },
-    { q: 'Comment démarrer un projet avec JUDDEV ?', a: 'Rien de plus simple : <strong>remplissez le formulaire de contact</strong> ci-dessus ou envoyez-nous un email. Nous vous répondons sous 24h pour planifier un appel de découverte gratuit et sans engagement.' }
-  ];
+const FAQ_FALLBACK = [
+  { question: 'Combien coûte un site web ou une application ?', answer: 'Le coût varie selon la complexité, les fonctionnalités et les délais de chaque projet. Chaque solution étant unique, nous établissons un devis personnalisé adapté à vos besoins et votre budget. Contactez-nous pour une estimation gratuite et sans engagement.' },
+  { question: 'Comment se passe le processus de développement ?', answer: 'Nous suivons une approche en 4 étapes : <strong>1) Analyse des besoins</strong> et cahier des charges, <strong>2) Design & prototypage</strong> soumis à validation, <strong>3) Développement itératif</strong> avec points réguliers, <strong>4) Tests, livraison et formation</strong>.' },
+  { question: 'Quels sont les délais de livraison ?', answer: 'Un site vitrine est livré en <strong>2 à 4 semaines</strong>. Une application complète nécessite en général <strong>2 à 4 mois</strong> selon la complexité. Nous établissons un calendrier précis dès le démarrage du projet.' },
+  { question: 'Proposez-vous une maintenance après livraison ?', answer: 'Oui, nous proposons des <strong>contrats de maintenance mensuelle</strong> incluant mises à jour de sécurité, hébergement, sauvegardes et support technique.' },
+  { question: 'Travaillez-vous avec des clients internationaux ?', answer: 'Absolument. Nous accompagnons des clients basés en <strong>Afrique, en Europe et dans la diaspora</strong>. Toute la communication et la gestion de projet se font à distance via des outils collaboratifs modernes.' },
+  { question: 'Comment démarrer un projet avec JUDDEV ?', answer: 'Rien de plus simple : <strong>remplissez le formulaire de contact</strong> ci-dessus ou envoyez-nous un email. Nous vous répondons sous 24h pour planifier un appel de découverte gratuit et sans engagement.' }
+];
 
+function renderFAQs(faqs) {
   const container = document.getElementById('faq-container');
-  if (container) {
-    container.innerHTML = '<div class="faq-grid">' + faqs.map((f, i) => `
-      <div class="faq-item" id="faq-contact-${i}">
-        <button class="faq-question" onclick="toggleContactFaq(${i})">
-          <span>${f.q}</span>
-          <i class="fas fa-chevron-down faq-icon"></i>
-        </button>
-        <div class="faq-answer"><p>${f.a}</p></div>
-      </div>`).join('') + '</div>';
+  if (!container) return;
+  container.innerHTML = '<div class="faq-grid">' + faqs.map((f, i) => `
+    <div class="faq-item" id="faq-contact-${i}">
+      <button class="faq-question" onclick="toggleContactFaq(${i})">
+        <span>${f.question}</span>
+        <i class="fas fa-chevron-down faq-icon"></i>
+      </button>
+      <div class="faq-answer"><p>${f.answer}</p></div>
+    </div>`).join('') + '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : window.location.origin + '/api';
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 5000);
+    const res = await fetch(API + '/faq', { signal: ctrl.signal });
+    if (res.ok) {
+      const faqs = await res.json();
+      renderFAQs(faqs.length ? faqs : FAQ_FALLBACK);
+    } else {
+      renderFAQs(FAQ_FALLBACK);
+    }
+  } catch (_) {
+    renderFAQs(FAQ_FALLBACK);
   }
 });
 

@@ -100,7 +100,8 @@ async function navigateTo(sectionId) {
     'contacts': 'Contacts & Infos',
     'partenaires': 'Gestion des Partenaires',
     'messages': 'Messages Reçus',
-    'team': 'Gestion de l\'Équipe'
+    'team': 'Gestion de l\'Équipe',
+    'faq': 'FAQ - Questions Fréquentes'
   };
   const titleEl = document.getElementById('topbar-title');
   if (titleEl) titleEl.textContent = titles[sectionId] || sectionId;
@@ -116,6 +117,7 @@ async function navigateTo(sectionId) {
     case 'partenaires': await loadPartenaires(); break;
     case 'messages': await loadMessages(); break;
     case 'team': await loadTeam(); break;
+    case 'faq': await loadFAQ(); break;
   }
 }
 
@@ -1198,7 +1200,7 @@ async function loadMessages() {
                   ${!m.read ? '<span style="background:var(--accent-blue);color:white;border-radius:999px;padding:0.1rem 0.5rem;font-size:0.68rem;font-weight:700">NOUVEAU</span>' : ''}
                 </div>
                 ${m.subject ? `<div style="font-size:0.82rem;font-weight:600;color:var(--text-secondary);margin-bottom:0.5rem">Sujet: ${escapeHtml(m.subject)}</div>` : ''}
-                <div style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;background:rgba(0,0,0,0.2);border-radius:0.5rem;padding:0.75rem">${escapeHtml(m.message || '')}</div>
+                <div style="font-size:0.85rem;color:var(--text-muted);line-height:1.8;background:rgba(0,0,0,0.2);border-radius:0.5rem;padding:0.75rem">${escapeHtml(m.message || '').replace(/\n/g, '<br>')}</div>
                 <div style="font-size:0.73rem;color:var(--text-dim);margin-top:0.5rem">${new Date(m.createdAt).toLocaleString('fr-FR')}</div>
               </div>
               <div style="display:flex;gap:0.5rem;flex-shrink:0">
@@ -1368,6 +1370,129 @@ function deleteTeamMember(id) {
       await apiDelete('/team/' + id);
       showToast('success', 'Supprimé', 'Membre supprimé.');
       await loadTeam();
+    } catch (err) { showToast('error', 'Erreur', err.message); }
+  });
+}
+
+// ============================================================
+// FAQ MANAGEMENT
+// ============================================================
+let allFAQs = [];
+
+async function loadFAQ() {
+  const section = document.getElementById('section-faq');
+  if (!section) return;
+  section.innerHTML = `<div style="text-align:center;padding:2rem"><i class="fas fa-circle-notch fa-spin" style="color:var(--accent-blue);font-size:1.5rem"></i></div>`;
+
+  try {
+    allFAQs = await apiGet('/faq') || [];
+
+    section.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+        <h2 style="font-size:1.25rem;font-weight:700;color:var(--text-primary)">Questions Fréquentes (FAQ)</h2>
+        <button onclick="openFAQModal()" style="background:var(--gradient-primary);border:none;color:white;border-radius:0.5rem;padding:0.6rem 1.2rem;cursor:pointer;font-size:0.85rem;font-weight:600;display:flex;align-items:center;gap:0.5rem;font-family:inherit">
+          <i class="fas fa-plus"></i> Ajouter une question
+        </button>
+      </div>
+      ${allFAQs.length === 0
+        ? `<div style="text-align:center;padding:3rem;color:var(--text-muted);border:1px dashed var(--border-color);border-radius:1rem">
+            <i class="fas fa-circle-question" style="font-size:2rem;margin-bottom:1rem;display:block"></i>
+            Aucune question FAQ pour l'instant.
+           </div>`
+        : allFAQs.map(f => `
+          <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:0.75rem;padding:1.25rem;margin-bottom:0.75rem">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem">
+              <div style="flex:1">
+                <div style="font-weight:600;color:var(--text-primary);margin-bottom:0.5rem;font-size:0.95rem">${escapeHtml(f.question)}</div>
+                <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6">${f.answer}</div>
+              </div>
+              <div style="display:flex;gap:0.5rem;flex-shrink:0">
+                <button onclick="openFAQModal('${f.id}')" style="background:rgba(0,102,255,0.1);border:1px solid rgba(0,102,255,0.2);color:var(--accent-light);border-radius:0.375rem;padding:0.4rem 0.7rem;cursor:pointer;font-size:0.78rem;font-family:inherit">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button onclick="deleteFAQ('${f.id}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;border-radius:0.375rem;padding:0.4rem 0.7rem;cursor:pointer;font-size:0.78rem;font-family:inherit">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+    `;
+  } catch (err) {
+    section.innerHTML = `<p style="color:var(--text-muted)">Erreur: ${err.message}</p>`;
+  }
+}
+
+function openFAQModal(id) {
+  const f = id ? allFAQs.find(x => x.id === id) : null;
+  const isEdit = !!f;
+
+  const inputStyle = `width:100%;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:0.5rem;padding:0.65rem 0.875rem;color:var(--text-primary);font-size:0.875rem;font-family:inherit;outline:none;box-sizing:border-box`;
+
+  openModal(isEdit ? 'Modifier la Question FAQ' : 'Nouvelle Question FAQ', `
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div>
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;display:block">Question *</label>
+        <input id="faq-q" type="text" style="${inputStyle}" value="${isEdit ? escapeHtml(f.question) : ''}" placeholder="Ex: Combien coûte un site web ?" />
+      </div>
+      <div>
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;display:block">Réponse * <span style="font-size:0.7rem;color:var(--text-dim)">(HTML autorisé pour la mise en forme)</span></label>
+        <textarea id="faq-a" rows="5" style="${inputStyle};resize:vertical">${isEdit ? f.answer : ''}</textarea>
+      </div>
+      <div>
+        <label style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem;display:block">Ordre d'affichage</label>
+        <input id="faq-order" type="number" style="${inputStyle}" value="${isEdit ? f.order : allFAQs.length + 1}" min="1" />
+      </div>
+    </div>
+    <button onclick="${isEdit ? `saveFAQEdit('${id}')` : 'saveFAQNew()'}" style="margin-top:1.5rem;width:100%;background:var(--gradient-primary);border:none;color:white;border-radius:0.5rem;padding:0.75rem;cursor:pointer;font-size:0.9rem;font-weight:600;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:0.5rem" id="faq-save-btn">
+      <i class="fas fa-check"></i> Sauvegarder
+    </button>
+  `);
+}
+
+async function saveFAQNew() {
+  const btn = document.getElementById('faq-save-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sauvegarde...';
+  try {
+    await apiPost('/faq', {
+      question: document.getElementById('faq-q').value,
+      answer: document.getElementById('faq-a').value,
+      order: parseInt(document.getElementById('faq-order').value) || 0
+    });
+    closeModal();
+    showToast('success', 'FAQ créée', 'La question a été ajoutée.');
+    await loadFAQ();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Sauvegarder';
+  }
+}
+
+async function saveFAQEdit(id) {
+  const btn = document.getElementById('faq-save-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sauvegarde...';
+  try {
+    await apiPut('/faq/' + id, {
+      question: document.getElementById('faq-q').value,
+      answer: document.getElementById('faq-a').value,
+      order: parseInt(document.getElementById('faq-order').value) || 0
+    });
+    closeModal();
+    showToast('success', 'FAQ mise à jour', 'Les modifications ont été sauvegardées.');
+    await loadFAQ();
+  } catch (err) {
+    showToast('error', 'Erreur', err.message);
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Sauvegarder';
+  }
+}
+
+function deleteFAQ(id) {
+  const f = allFAQs.find(x => x.id === id);
+  confirmDelete(f ? f.question.substring(0, 50) + '...' : 'cette question', async () => {
+    try {
+      await apiDelete('/faq/' + id);
+      showToast('success', 'Supprimé', 'Question FAQ supprimée.');
+      await loadFAQ();
     } catch (err) { showToast('error', 'Erreur', err.message); }
   });
 }

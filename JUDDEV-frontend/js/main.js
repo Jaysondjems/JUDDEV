@@ -176,9 +176,31 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   const closeBtn = modal.querySelector('.modal-close');
   const form = modal.querySelector('#devis-form');
 
-  function openModal() {
+  function openModal(formationTitle) {
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    if (formationTitle) {
+      setTimeout(() => {
+        const sel = document.getElementById('formation-select');
+        if (sel) {
+          // Try to match existing option
+          const opt = Array.from(sel.options).find(o => o.value === formationTitle || o.text === formationTitle);
+          if (opt) {
+            sel.value = opt.value;
+          } else {
+            // Add a temporary option for this formation
+            const newOpt = document.createElement('option');
+            newOpt.value = formationTitle;
+            newOpt.text = formationTitle;
+            newOpt.setAttribute('data-temp', '1');
+            // Remove previous temp option if any
+            sel.querySelectorAll('[data-temp]').forEach(o => o.remove());
+            sel.appendChild(newOpt);
+            sel.value = formationTitle;
+          }
+        }
+      }, 50);
+    }
   }
 
   function closeModal() {
@@ -240,17 +262,24 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         const API = typeof JUDDEV_CONFIG !== 'undefined' ? JUDDEV_CONFIG.API_URL : 'http://localhost:5000/api';
         const formTypeField = form.querySelector('input[name="form-type"]');
         const formType = formTypeField ? formTypeField.value : 'DEVIS';
-        await fetch(API + '/contact/message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name,
-            email,
-            phone,
-            subject: `[${formType}] ${service || 'Demande'}`,
-            message: msgBody
-          })
-        });
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 10000);
+        try {
+          await fetch(API + '/contact/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name,
+              email,
+              phone,
+              subject: `[${formType}] ${service || 'Demande'}`,
+              message: msgBody
+            }),
+            signal: ctrl.signal
+          });
+        } finally {
+          clearTimeout(t);
+        }
       } catch (_) {}
 
       closeModal();

@@ -208,7 +208,7 @@
           <select class="form-input"><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select>
         </div>
         <div class="form-group"><label class="form-label">Formation souhaitée *</label>
-          <select class="form-input" required><option value="">Sélectionnez</option>
+          <select id="formation-select" class="form-input" required><option value="">Sélectionnez</option>
             <option>Développement Web Full Stack</option><option>Développement Mobile</option>
             <option>UI/UX Design</option><option>Cloud & DevOps</option>
             <option>IA & Machine Learning</option><option>Formation sur mesure</option>
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="formation-price">
           ${f.price} <span>/ participant</span>
         </div>
-        <button class="btn btn-primary" style="width:100%" onclick="window.openDevisModal && window.openDevisModal()">
+        <button class="btn btn-primary" style="width:100%" onclick="window.openDevisModal && window.openDevisModal('${f.title.replace(/'/g, "\\'")}')">
           <i class="fas fa-graduation-cap"></i> S'inscrire
         </button>
       </div>
