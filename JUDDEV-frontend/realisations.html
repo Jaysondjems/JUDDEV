@@ -83,28 +83,26 @@
       <h2 class="section-title">Tous nos <span>Projets</span></h2>
     </div>
 
-    <!-- Filter Dropdowns -->
-    <div class="filter-dropdowns reveal" id="filter-container">
-      <div class="filter-dropdown-group">
-        <label class="filter-dropdown-label" for="filter-domain">
-          <i class="fas fa-layer-group"></i> Domaine
-        </label>
-        <select class="filter-select" id="filter-domain">
-          <option value="">Tous les domaines</option>
-        </select>
+    <!-- Filter Buttons -->
+    <div class="filter-bar reveal" id="filter-container">
+      <div class="filter-bar-row">
+        <span class="filter-bar-label"><i class="fas fa-layer-group"></i> Domaine</span>
+        <div class="filter-btn-group" id="filter-domain-btns">
+          <button class="filter-btn active" data-value="">Tous</button>
+        </div>
       </div>
-      <div class="filter-dropdown-group">
-        <label class="filter-dropdown-label" for="filter-tech">
-          <i class="fas fa-code"></i> Technologie
-        </label>
-        <select class="filter-select" id="filter-tech">
-          <option value="">Toutes les technologies</option>
-        </select>
+      <div class="filter-bar-row">
+        <span class="filter-bar-label"><i class="fas fa-code"></i> Technologie</span>
+        <div class="filter-btn-group" id="filter-tech-btns">
+          <button class="filter-btn active" data-value="">Toutes</button>
+        </div>
       </div>
-      <span class="filter-count-badge" id="filter-count"></span>
-      <button class="filter-reset-btn" id="filter-reset" style="display:none">
-        <i class="fas fa-rotate-left"></i> Réinitialiser
-      </button>
+      <div class="filter-bar-meta">
+        <span class="filter-count-badge" id="filter-count"></span>
+        <button class="filter-reset-btn" id="filter-reset" style="display:none">
+          <i class="fas fa-rotate-left"></i> Réinitialiser
+        </button>
+      </div>
     </div>
 
     <!-- Realisations Grid -->
@@ -172,7 +170,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copyright">© 2025 JUDDEV CORPORATION. Tous droits réservés.</span>
+      <span class="footer-copyright">© 2026 JUDDEV CORPORATION. Tous droits réservés.</span>
       <div class="footer-bottom-links"><a href="#">Mentions légales</a><a href="#">Confidentialité</a></div>
     </div>
   </div>
@@ -397,12 +395,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     allRealisations = JUDDEV_DATA.realisations;
   }
 
+  let activeDomain = '';
+  let activeTech = '';
+
   function getFiltered() {
-    const domainVal = (document.getElementById('filter-domain')?.value || '').trim();
-    const techVal = (document.getElementById('filter-tech')?.value || '').trim();
     return allRealisations.filter(r => {
-      const domainMatch = !domainVal || (r.category || '') === domainVal;
-      const techMatch = !techVal || (r.technologies || []).includes(techVal);
+      const domainMatch = !activeDomain || (r.category || '') === activeDomain;
+      const techMatch = !activeTech || (r.technologies || []).includes(activeTech);
       return domainMatch && techMatch;
     });
   }
@@ -423,43 +422,69 @@ document.addEventListener('DOMContentLoaded', async () => {
   function updateResetBtn() {
     const resetBtn = document.getElementById('filter-reset');
     if (!resetBtn) return;
-    const domainVal = document.getElementById('filter-domain')?.value || '';
-    const techVal = document.getElementById('filter-tech')?.value || '';
-    resetBtn.style.display = (domainVal || techVal) ? 'inline-flex' : 'none';
+    resetBtn.style.display = (activeDomain || activeTech) ? 'inline-flex' : 'none';
   }
 
-  // Populate domain filter
-  const domainSelect = document.getElementById('filter-domain');
-  if (domainSelect) {
-    const domains = [...new Set(allRealisations.map(r => r.category).filter(Boolean))].sort();
-    domains.forEach(d => {
-      const opt = document.createElement('option');
-      opt.value = d;
-      opt.textContent = d;
-      domainSelect.appendChild(opt);
+  function setActiveBtn(groupId, value) {
+    document.querySelectorAll(`#${groupId} .filter-btn`).forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.value === value);
     });
-    domainSelect.addEventListener('change', applyFilters);
   }
 
-  // Populate tech filter
-  const techSelect = document.getElementById('filter-tech');
-  if (techSelect) {
-    const techs = [...new Set(allRealisations.flatMap(r => r.technologies || []))].sort();
-    techs.forEach(t => {
-      const opt = document.createElement('option');
-      opt.value = t;
-      opt.textContent = t;
-      techSelect.appendChild(opt);
+  function addFilterBtn(groupId, value, label) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.value = value;
+    btn.textContent = label;
+    group.appendChild(btn);
+    btn.addEventListener('click', () => {
+      if (groupId === 'filter-domain-btns') {
+        activeDomain = value;
+        setActiveBtn('filter-domain-btns', value);
+      } else {
+        activeTech = value;
+        setActiveBtn('filter-tech-btns', value);
+      }
+      applyFilters();
     });
-    techSelect.addEventListener('change', applyFilters);
   }
+
+  // Wire "Tous" / "Toutes" default buttons
+  const defaultDomainBtn = document.querySelector('#filter-domain-btns .filter-btn');
+  if (defaultDomainBtn) {
+    defaultDomainBtn.addEventListener('click', () => {
+      activeDomain = '';
+      setActiveBtn('filter-domain-btns', '');
+      applyFilters();
+    });
+  }
+  const defaultTechBtn = document.querySelector('#filter-tech-btns .filter-btn');
+  if (defaultTechBtn) {
+    defaultTechBtn.addEventListener('click', () => {
+      activeTech = '';
+      setActiveBtn('filter-tech-btns', '');
+      applyFilters();
+    });
+  }
+
+  // Populate domain buttons
+  const domains = [...new Set(allRealisations.map(r => r.category).filter(Boolean))].sort();
+  domains.forEach(d => addFilterBtn('filter-domain-btns', d, d));
+
+  // Populate tech buttons
+  const techs = [...new Set(allRealisations.flatMap(r => r.technologies || []))].sort();
+  techs.forEach(t => addFilterBtn('filter-tech-btns', t, t));
 
   // Reset button
   const resetBtn = document.getElementById('filter-reset');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      if (domainSelect) domainSelect.value = '';
-      if (techSelect) techSelect.value = '';
+      activeDomain = '';
+      activeTech = '';
+      setActiveBtn('filter-domain-btns', '');
+      setActiveBtn('filter-tech-btns', '');
       applyFilters();
     });
   }

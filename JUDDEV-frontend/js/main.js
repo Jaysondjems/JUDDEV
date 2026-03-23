@@ -1060,6 +1060,15 @@ document.querySelectorAll('.counter').forEach(el => {
     // --- Navbar Logo Image ---
     const navbarLogoEl = document.querySelector('.navbar-logo');
     if (navbarLogoEl && !navbarLogoEl.querySelector('.navbar-logo-img')) {
+      // Wrap existing text content in .navbar-logo-text for vertical stacking
+      if (!navbarLogoEl.querySelector('.navbar-logo-text')) {
+        const textWrapper = document.createElement('div');
+        textWrapper.className = 'navbar-logo-text';
+        while (navbarLogoEl.firstChild) {
+          textWrapper.appendChild(navbarLogoEl.firstChild);
+        }
+        navbarLogoEl.appendChild(textWrapper);
+      }
       const logoImg = document.createElement('img');
       logoImg.src = 'images/JUDDEVlogomenu.png';
       logoImg.className = 'navbar-logo-img';
