@@ -64,7 +64,7 @@ router.post('/subscribe', async (req, res) => {
     await Subscriber.create({ email: email.toLowerCase() });
     console.log('[Newsletter] Nouvel abonné créé:', email);
 
-    const welcomeSiteUrl = process.env.FRONTEND_URL || '';
+    const welcomeSiteUrl = process.env.FRONTEND_URL || process.env.RENDER_EXTERNAL_URL || '';
     // Send welcome email
     await sendEmail(
       email,
@@ -125,7 +125,7 @@ async function notifySubscribers(article) {
     if (!subscribers.length) return;
 
     const emails = subscribers.map(s => s.email);
-    const siteUrl = process.env.FRONTEND_URL || 'http://localhost:5000';
+    const siteUrl = process.env.FRONTEND_URL || process.env.RENDER_EXTERNAL_URL || '';
 
     await sendEmail(
       emails.join(','),
