@@ -4219,8 +4219,8 @@ body {
     min-width: 0;
   }
   .navbar-logo-img {
-    width: 44px;
-    height: 44px;
+    width: 45px;
+    height: 45px;
     flex-shrink: 0;
   }
   .navbar-hamburger {
@@ -4238,8 +4238,8 @@ body {
     gap: 0.35rem;
   }
   .navbar-logo-img {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
 }
 
@@ -4251,8 +4251,8 @@ body {
     font-size: 0.85rem;
   }
   .navbar-logo-img {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
   }
 }
 
