@@ -25,11 +25,50 @@
     <a href="index.html" class="navbar-logo">JUDDEV<span> CORPORATION</span></a>
     <div class="navbar-links">
       <a href="index.html" class="active">Accueil</a>
-      <a href="a-propos.html">À Propos</a>
-      <a href="services.html">Services</a>
-      <a href="realisations.html">Réalisations</a>
+      <div class="nav-item">
+        <a href="a-propos.html">À Propos <i class="fas fa-chevron-down nav-arrow"></i></a>
+        <div class="nav-dropdown">
+          <a href="a-propos.html#histoire"><i class="fas fa-building"></i> Qui sommes-nous</a>
+          <a href="a-propos.html#mission"><i class="fas fa-bullseye"></i> Mission & Objectifs</a>
+          <a href="a-propos.html#valeurs"><i class="fas fa-star"></i> Nos Valeurs</a>
+          <a href="a-propos.html#equipe"><i class="fas fa-users"></i> Notre Équipe</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="services.html">Services <i class="fas fa-chevron-down nav-arrow"></i></a>
+        <div class="nav-dropdown">
+          <a href="service-detail.html?id=dev-web"><i class="fas fa-globe"></i> Développement Web</a>
+          <a href="service-detail.html?id=dev-mobile"><i class="fas fa-mobile-alt"></i> Applications Mobiles</a>
+          <a href="service-detail.html?id=saas"><i class="fas fa-cloud"></i> Produits SaaS</a>
+          <a href="service-detail.html?id=ux-design"><i class="fas fa-paint-brush"></i> UI/UX Design</a>
+          <div class="nav-dropdown-divider"></div>
+          <a href="service-detail.html?id=cloud"><i class="fas fa-server"></i> Cloud Engineering</a>
+          <a href="service-detail.html?id=ia-solutions"><i class="fas fa-brain"></i> IA & Automatisation</a>
+          <a href="service-detail.html?id=cybersecurite"><i class="fas fa-shield-alt"></i> Cybersécurité</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <a href="realisations.html">Réalisations <i class="fas fa-chevron-down nav-arrow"></i></a>
+        <div class="nav-dropdown">
+          <a href="realisations.html"><i class="fas fa-th-large"></i> Tous les Projets</a>
+          <a href="realisations.html?domain=Web"><i class="fas fa-laptop-code"></i> Projets Web</a>
+          <a href="realisations.html?domain=Mobile"><i class="fas fa-mobile-alt"></i> Projets Mobile</a>
+          <a href="realisations.html?domain=SaaS"><i class="fas fa-cubes"></i> Projets SaaS</a>
+        </div>
+      </div>
       <a href="blog.html">Blog</a>
-      <a href="formations.html">Formations</a>
+      <div class="nav-item">
+        <a href="formations.html">Formations <i class="fas fa-chevron-down nav-arrow"></i></a>
+        <div class="nav-dropdown">
+          <a href="formations.html"><i class="fas fa-graduation-cap"></i> Nos Programmes</a>
+          <div class="nav-dropdown-divider"></div>
+          <a href="formations.html#programmes"><i class="fas fa-code"></i> Dév. Web Full Stack</a>
+          <a href="formations.html#programmes"><i class="fas fa-mobile-alt"></i> Dév. Mobile</a>
+          <a href="formations.html#programmes"><i class="fas fa-paint-brush"></i> UI/UX Design</a>
+          <a href="formations.html#programmes"><i class="fas fa-server"></i> Cloud & DevOps</a>
+          <a href="formations.html#programmes"><i class="fas fa-brain"></i> IA & Machine Learning</a>
+        </div>
+      </div>
       <a href="contact.html">Contact</a>
     </div>
     <div class="navbar-cta">
@@ -171,8 +210,6 @@
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-mobile-alt"></i></span> Flutter</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-figma"></i></span> Figma</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-code"></i></span> TypeScript</div>
-      <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-php"></i></span> PHP</div>
-      <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-laravel"></i></span> Laravel</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-angular"></i></span> Angular</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-server"></i></span> Redis</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-dharmachakra"></i></span> Kubernetes</div>
@@ -184,8 +221,6 @@
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-mobile-alt"></i></span> Flutter</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-figma"></i></span> Figma</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-code"></i></span> TypeScript</div>
-      <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-php"></i></span> PHP</div>
-      <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-laravel"></i></span> Laravel</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fab fa-angular"></i></span> Angular</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-server"></i></span> Redis</div>
       <div class="tech-pill"><span class="tech-icon-box"><i class="fas fa-dharmachakra"></i></span> Kubernetes</div>
@@ -275,7 +310,7 @@
           <i class="fas fa-chevron-down faq-icon"></i>
         </button>
         <div class="faq-answer">
-          <p>Nos tarifs varient selon la complexité du projet. Un site vitrine commence à partir de <strong>150 000 FCFA</strong>, une application mobile à partir de <strong>500 000 FCFA</strong>, et un produit SaaS sur mesure à partir de <strong>1 000 000 FCFA</strong>. Nous vous proposons systématiquement un devis gratuit et personnalisé.</p>
+          <p>Le coût d'un projet dépend entièrement de sa <strong>complexité</strong> et des <strong>fonctionnalités souhaitées</strong>. Chaque projet étant unique, nous établissons un devis gratuit et personnalisé en fonction de vos besoins réels. Contactez-nous pour obtenir une estimation précise sans engagement.</p>
         </div>
       </div>
       <div class="faq-item">
@@ -293,7 +328,7 @@
           <i class="fas fa-chevron-down faq-icon"></i>
         </button>
         <div class="faq-answer">
-          <p>Les délais dépendent de la taille du projet. Un site vitrine est généralement livré en <strong>2 à 4 semaines</strong>, une application mobile en <strong>6 à 12 semaines</strong>, et un produit SaaS complet en <strong>3 à 6 mois</strong>. Nous respectons rigoureusement les délais convenus.</p>
+          <p>Les délais varient selon le type de projet : un <strong>site vitrine</strong> est livré en <strong>2 à 3 jours</strong>, une <strong>application web</strong> en <strong>1 à 2 semaines</strong>, une <strong>application mobile</strong> en <strong>2 à 3 semaines</strong>, et un <strong>produit SaaS</strong> en <strong>2 à 4 semaines</strong>. Nous respectons rigoureusement les délais convenus.</p>
         </div>
       </div>
       <div class="faq-item">
@@ -404,8 +439,8 @@
     <div class="footer-bottom">
       <span class="footer-copyright">© 2026 JUDDEV CORPORATION. Tous droits réservés.</span>
       <div class="footer-bottom-links">
-        <a href="#">Mentions légales</a>
-        <a href="#">Politique de confidentialité</a>
+        <a href="mentions-legales.html">Mentions légales</a>
+        <a href="politique-confidentialite.html">Politique de confidentialité</a>
         <a href="#">CGU</a>
       </div>
     </div>
@@ -519,10 +554,10 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // Realisations Grid (first 3)
+  // Realisations Grid (first 5)
   const realisationsGrid = document.getElementById('realisations-grid');
   if (realisationsGrid && typeof JUDDEV_DATA !== 'undefined') {
-    realisationsGrid.innerHTML = JUDDEV_DATA.realisations.slice(0, 3).map((r, i) => `
+    realisationsGrid.innerHTML = JUDDEV_DATA.realisations.slice(0, 5).map((r, i) => `
       <a href="realisation-detail.html?id=${r.id}" class="realisation-card reveal stagger-${i + 1}" style="text-decoration:none">
         <div class="realisation-card-img">
           <img src="${r.image}" alt="${r.title}" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#0066ff22,#00d4ff22)'" />
@@ -613,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (realisationsGrid && data.realisations && data.realisations.length) {
-      realisationsGrid.innerHTML = data.realisations.slice(0, 3).map((r, i) => `
+      realisationsGrid.innerHTML = data.realisations.slice(0, 5).map((r, i) => `
         <a href="realisation-detail.html?id=${r.id}" class="realisation-card reveal stagger-${i + 1}" style="text-decoration:none">
           <div class="realisation-card-img">
             <img src="${r.image}" alt="${r.title}" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#0066ff22,#00d4ff22)'" />

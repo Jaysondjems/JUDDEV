@@ -3664,6 +3664,12 @@ html.light-mode .navbar-logo {
   -webkit-text-fill-color: transparent;
 }
 
+/* Dark mode: logo sombre agrandi pour correspondre visuellement au mode clair */
+html:not(.light-mode) .navbar-logo-img {
+  width: 72px;
+  height: 72px;
+}
+
 html.light-mode .form-input {
   background: #f8faff;
   border-color: rgba(0,82,204,0.2);
@@ -4176,6 +4182,102 @@ body {
   .project-layout {
     gap: 1.5rem;
   }
+}
+
+/* ============================================================
+   NAVBAR — DROPDOWN MENUS
+   ============================================================ */
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-item > a {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.nav-arrow {
+  font-size: 0.6em;
+  opacity: 0.65;
+  transition: transform 0.25s ease;
+  pointer-events: none;
+}
+
+.nav-item:hover .nav-arrow {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.875rem;
+  padding: 0.5rem;
+  min-width: 220px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 102, 255, 0.06);
+  z-index: 9999;
+}
+
+.nav-item:hover .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+.nav-dropdown a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+  padding: 0.55rem 0.875rem !important;
+  border-radius: 0.55rem !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.82rem !important;
+  font-weight: 400 !important;
+  white-space: nowrap;
+  text-decoration: none !important;
+  transition: background 0.18s, color 0.18s;
+}
+
+.nav-dropdown a:hover {
+  background: rgba(0, 102, 255, 0.1) !important;
+  color: var(--accent-blue) !important;
+}
+
+.nav-dropdown a i {
+  font-size: 0.78em;
+  width: 14px;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+.nav-dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.35rem 0.5rem;
+}
+
+html.light-mode .nav-dropdown {
+  background: #ffffff;
+  border-color: rgba(0, 82, 204, 0.15);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 82, 204, 0.08);
+}
+
+/* Hide dropdown on mobile (handled differently) */
+@media (max-width: 1024px) {
+  .nav-item .nav-dropdown { display: none; }
+  .nav-arrow { display: none; }
 }
 
 /* ============================================================
