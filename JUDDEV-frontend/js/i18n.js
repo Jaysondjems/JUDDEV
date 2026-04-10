@@ -683,6 +683,53 @@ const JUDDEV_TRANSLATIONS = {
   }
 };
 
+const JUDDEV_SURFACE_TRANSLATIONS = {
+  en: {
+    'Développement Web': 'Web Development',
+    'Applications Mobiles': 'Mobile Applications',
+    'Intelligence Artificielle': 'Artificial Intelligence',
+    'Sécurité': 'Security',
+    'Cybersécurité': 'Cybersecurity',
+    'Architecture': 'Architecture',
+    'Innovation': 'Innovation',
+    'Startup': 'Startup',
+    'Technologie': 'Technology',
+    'Technologies utilisées': 'Technologies used',
+    'Description du projet': 'Project description',
+    'Points forts': 'Highlights',
+    'Informations Projet': 'Project Information',
+    'Projet similaire ?': 'Similar project?',
+    'Visiter le projet': 'Visit project',
+    'Voir le projet': 'View project',
+    'Voir la démo YouTube': 'Watch YouTube demo',
+    'Client': 'Client',
+    'Année': 'Year',
+    'Catégorie': 'Category',
+    'Secteur': 'Sector',
+    'Service': 'Service',
+    'Tous les Projets': 'All Projects',
+    'Tous les articles': 'All articles',
+    'Article introuvable.': 'Article not found.',
+    'Réalisation introuvable.': 'Project not found.',
+    'Chargement du projet...': 'Loading project...',
+    'Chargement de l\'article...': 'Loading article...',
+    'Yaoundé, Cameroun': 'Yaounde, Cameroon',
+    'Horaires d\'ouverture': 'Opening hours',
+    'Lundi - Vendredi : 8h00 - 18h00': 'Monday - Friday: 8:00 AM - 6:00 PM',
+    'Samedi : 9h00 - 13h00': 'Saturday: 9:00 AM - 1:00 PM',
+    'Question sur une réalisation': 'Question about a project',
+    'Renseignements sur les services': 'Service inquiry',
+    'Demande de devis': 'Quote request',
+    'Partenariat': 'Partnership',
+    'Candidature': 'Application',
+    'Autre': 'Other',
+    'Téléphone': 'Phone',
+    'Adresse': 'Address',
+    'Commentaires': 'Comments',
+    'Tags': 'Tags'
+  }
+};
+
 // ============================================================
 // i18n Engine
 // ============================================================
@@ -975,6 +1022,7 @@ const JUDDEV_I18N = {
   _translateAllTextNodes() {
     const fr = JUDDEV_TRANSLATIONS.fr;
     const target = JUDDEV_TRANSLATIONS[this.currentLang] || fr;
+    const surface = JUDDEV_SURFACE_TRANSLATIONS[this.currentLang] || {};
 
     // Build plain-text FR → target map (skip entries with HTML tags)
     const map = new Map();
@@ -985,8 +1033,13 @@ const JUDDEV_I18N = {
       if (/<[a-z]/i.test(frVal)) continue; // skip HTML entries
       map.set(frVal.trim(), tVal);
     }
+    Object.entries(surface).forEach(([src, dest]) => {
+      if (!src || !dest || src === dest) return;
+      map.set(src.trim(), dest);
+    });
 
     if (map.size === 0) return;
+    const replacements = [...map.entries()].sort((a, b) => b[0].length - a[0].length);
 
     // Walk all text nodes, skip script/style/input/data-i18n parents
     const walker = document.createTreeWalker(
@@ -997,7 +1050,7 @@ const JUDDEV_I18N = {
           const p = node.parentElement;
           if (!p) return NodeFilter.FILTER_REJECT;
           const tag = p.tagName;
-          if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA', 'INPUT'].includes(tag)) return NodeFilter.FILTER_REJECT;
+          if (['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA', 'INPUT', 'IFRAME'].includes(tag)) return NodeFilter.FILTER_REJECT;
           if (p.closest('[data-i18n]')) return NodeFilter.FILTER_REJECT;
           if (node.nodeValue.trim()) return NodeFilter.FILTER_ACCEPT;
           return NodeFilter.FILTER_REJECT;
@@ -1009,10 +1062,14 @@ const JUDDEV_I18N = {
     while (walker.nextNode()) nodes.push(walker.currentNode);
 
     nodes.forEach(node => {
-      const trimmed = node.nodeValue.trim();
-      if (map.has(trimmed)) {
-        node.nodeValue = node.nodeValue.replace(trimmed, map.get(trimmed));
-      }
+      let value = node.nodeValue;
+      let changed = false;
+      replacements.forEach(([src, dest]) => {
+        if (!src || src === dest || !value.includes(src)) return;
+        value = value.split(src).join(dest);
+        changed = true;
+      });
+      if (changed) node.nodeValue = value;
     });
   },
 

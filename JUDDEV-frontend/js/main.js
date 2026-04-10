@@ -776,7 +776,7 @@ async function loadRealisationDetail() {
               </div>
 
               <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
-                ${project.showSiteBtn !== false && project.url && project.url !== '#' ? `<a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> Visiter le projet</a>` : ''}
+                ${project.showSiteBtn !== false && project.url && project.url !== '#' ? `<a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> Voir le projet</a>` : ''}
                 <a href="${project.youtubeUrl || '#'}" ${project.youtubeUrl ? 'target="_blank"' : ''} class="btn btn-outline" style="border-color:#ff0000;color:#ff4444${!project.youtubeUrl ? ';opacity:0.5;cursor:default' : ''}">
                   <i class="fab fa-youtube"></i> Voir la démo YouTube
                 </a>
@@ -813,7 +813,11 @@ async function loadRealisationDetail() {
                 </div>` : ''}
               </div>
             </div>
-            <div style="margin-top:1.5rem">
+            <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem">
+              ${project.showSiteBtn !== false && project.url && project.url !== '#' ? `
+                <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="width:100%;justify-content:center">
+                  <i class="fas fa-external-link-alt"></i> Voir le projet
+                </a>` : ''}
               <button class="btn btn-primary" style="width:100%" onclick="window.openDevisModal && window.openDevisModal()">
                 <i class="fas fa-paper-plane"></i> Projet similaire ?
               </button>
@@ -945,8 +949,9 @@ async function loadArticleDetail() {
     return pages;
   }
 
-  const articlePages = buildArticlePages(contentToHtml(articleLangVal(article, 'content')));
-  const isMultiPage = articlePages.length > 1;
+  const isPdfArticle = Boolean(article.pdfFile);
+  const articlePages = isPdfArticle ? [] : buildArticlePages(contentToHtml(articleLangVal(article, 'content')));
+  const isMultiPage = !isPdfArticle && articlePages.length > 1;
   let currentPage = 0;
 
   function renderPage(idx) {
@@ -1006,30 +1011,19 @@ async function loadArticleDetail() {
                   </div>
                 </div>
               </div>
-              <img src="${article.image}" alt="${articleLangVal(article, 'title')}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:2rem" onerror="this.style.display='none'" />
+              ${!isPdfArticle ? `<img src="${article.image}" alt="${articleLangVal(article, 'title')}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:var(--radius-lg);margin-bottom:2rem" onerror="this.style.display='none'" />` : ''}
 
               ${article.pdfFile ? `
-              <!-- PDF embed: displays the source PDF with full fidelity -->
-              <div class="pdf-embed-section" id="pdf-embed-section">
-                <div class="pdf-embed-header">
-                  <span><i class="fas fa-file-pdf" style="color:#f59e0b"></i> ${articleUiLabel('Document PDF source', 'Source PDF document')}</span>
-                  <button onclick="toggleArticlePdf()" id="pdf-toggle-btn" class="btn btn-outline btn-sm">
-                    <i class="fas fa-eye"></i> ${articleUiLabel('Afficher le PDF', 'Show PDF')}
-                  </button>
-                </div>
-                <div class="pdf-embed-viewer" id="pdf-viewer-container">
+              <div class="pdf-article-frame">
+                <div class="pdf-embed-viewer open" id="pdf-viewer-container">
                   <iframe src="${article.pdfFile}" title="${articleLangVal(article, 'title')}" loading="lazy" allowfullscreen></iframe>
-                  <div class="pdf-embed-footer">
-                    <a href="${article.pdfFile}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm"><i class="fas fa-download"></i> ${articleUiLabel('Télécharger le PDF', 'Download PDF')}</a>
-                  </div>
                 </div>
               </div>
               ` : ''}
 
-              <!-- Article content with pagination -->
-              <div id="article-page-content">${articlePages[0]}</div>
+              ${!isPdfArticle ? `<div id="article-page-content">${articlePages[0]}</div>` : ''}
 
-              <!-- Page navigation (shown only for multi-page articles) -->
+              ${!isPdfArticle ? `<!-- Page navigation (shown only for multi-page articles) -->
               <div id="article-page-nav" style="display:${isMultiPage ? 'flex' : 'none'};align-items:center;justify-content:center;gap:1rem;margin:2rem 0;padding:1.25rem;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-xl)">
                 <button id="article-page-prev" onclick="_articleChangePage(-1)" class="btn btn-outline btn-sm" ${currentPage === 0 ? 'disabled' : ''} style="min-width:100px">
                   <i class="fas fa-chevron-left"></i> <span data-i18n="article.page.prev">Précédent</span>
@@ -1038,7 +1032,7 @@ async function loadArticleDetail() {
                 <button id="article-page-next" onclick="_articleChangePage(1)" class="btn btn-primary btn-sm" ${articlePages.length <= 1 ? 'disabled' : ''} style="min-width:100px">
                   <span data-i18n="article.page.next">Suivant</span> <i class="fas fa-chevron-right"></i>
                 </button>
-              </div>
+              </div>` : ''}
 
               <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border-color)">
                 <strong style="font-size:0.875rem;color:var(--text-secondary)" data-i18n="article.tags">Tags :</strong>
@@ -1143,18 +1137,6 @@ async function loadArticleDetail() {
   container.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
     el.classList.add('visible');
   });
-
-  // PDF toggle function
-  window.toggleArticlePdf = function() {
-    const viewer = document.getElementById('pdf-viewer-container');
-    const btn = document.getElementById('pdf-toggle-btn');
-    if (!viewer) return;
-    const isOpen = viewer.classList.toggle('open');
-    if (btn) btn.innerHTML = isOpen
-      ? `<i class="fas fa-eye-slash"></i> ${articleUiLabel('Masquer le PDF', 'Hide PDF')}`
-      : `<i class="fas fa-eye"></i> ${articleUiLabel('Afficher le PDF', 'Show PDF')}`;
-    if (isOpen) viewer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  };
 
   // Load comments for this article
   loadArticleComments(id);
