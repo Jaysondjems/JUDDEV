@@ -1,0 +1,13 @@
+{
+  "name": "juddev-corporation",
+  "version": "1.0.0",
+  "description": "JUDDEV CORPORATION - Website & API",
+  "scripts": {
+    "start": "node JUDDEV-backend/server.js",
+    "build": "cd JUDDEV-backend && npm install --omit=dev"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  }
+}
